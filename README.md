@@ -1,6 +1,6 @@
 # From Open Labs to Closed Empires · Five-Chapter Visual Report
 
-This is the local web work product for COMP7507 Group 3. Python Flask serves the narrative report, a summary-data API, and unified dashboard routes. HTML/CSS/JS renders the report figures. The original four team dashboards retain their interactions, and the Chapter 5 synthesis dashboard is available from the same entry point.
+This is the local web work product for COMP7507 Group 3. Python Flask serves the narrative report, a summary-data API, and unified dashboard routes. ECharts renders the report figures and Chapters 2–5 with shared colors and typography from `static/chart-theme.js`. Chapter 1 uses D3 scales, paths, stacking and animation on Canvas, plus an SVG monthly ruler. The original four team dashboards retain their interactions, and the Chapter 5 synthesis dashboard is available from the same entry point.
 
 ## Run
 
@@ -10,11 +10,11 @@ From this directory:
 bash start.sh
 ```
 
-On first run, the script creates `.venv` and installs `requirements.txt`. Open <http://127.0.0.1:8764/>. To choose another port, run `PORT=8765 bash start.sh` and use that port in the URL. Press `Ctrl+C` to stop the server.
+Install uv first. The script runs Python 3.12 with `requirements.txt` in a uv-managed environment. Open <http://127.0.0.1:8764/>. To choose another port, run `PORT=8765 bash start.sh` and use that port in the URL. Press `Ctrl+C` to stop the server.
 
 ## Share from this Mac
 
-Double-click `share.command`, or run `bash share.sh` in this directory. The script starts the Python WSGI server on a local-only port and creates a temporary HTTPS address through Cloudflare Tunnel. Copy the `https://...trycloudflare.com` address printed in the terminal and send it to teammates. No router port forwarding or Cloudflare account is needed. The first run installs Python dependencies and downloads the official `cloudflared` binary into `.tools/` if necessary.
+Double-click `share.command`, or run `bash share.sh` in this directory. The script starts the Python WSGI server on a local-only port and creates a temporary HTTPS address through Cloudflare Tunnel. Copy the `https://...trycloudflare.com` address printed in the terminal and send it to teammates. No router port forwarding or Cloudflare account is needed. The first run resolves Python dependencies through uv and downloads the official `cloudflared` binary into `.tools/` if necessary.
 
 Keep the Mac awake, connected to the internet, and the terminal open while others visit. Press `Ctrl+C` to stop sharing. The address changes on each restart, and anyone with the address can view the site. Restricting access or keeping a permanent address requires a named tunnel and a Cloudflare account.
 
@@ -48,3 +48,7 @@ The report figures are derived from the supplied dashboard data under `dashboard
 ## Package
 
 Exclude `.venv/`, `.tools/`, `__pycache__/`, and `.DS_Store` when packaging this directory. The course-required final group and individual PDF reports were not included in the dashboard materials. Add them to the submission package and link them from `index.html` once they are complete.
+
+## Rebuild Chapter 1
+
+The editable D3 implementation is in `sites/arena-weight-flow`. From that directory run `npm ci`, `npm test`, and `npm run build:report`. This builds and installs the English dashboard entry into `dashboards/ch1`; the standalone `npm run build` includes the story page and language switch. `BUILD_INFO.json` records the generated asset hashes.

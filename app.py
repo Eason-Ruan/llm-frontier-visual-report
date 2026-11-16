@@ -136,12 +136,12 @@ def import_app(name, path):
     return module
 
 
-# Dash and the Chapter 3 Flask app keep their original callbacks and routes.
+# Chapters 2 and 3 serve normalized observations to their ECharts frontends.
 sys.path.insert(0, str(DASHBOARDS / "ch2"))
 ch2 = import_app("chapter2_app", DASHBOARDS / "ch2/app.py")
 ch3 = import_app("chapter3_app", DASHBOARDS / "ch3/app.py")
 application = DispatcherMiddleware(app, {
-    "/dashboard/ch2": ch2.app.server,
+    "/dashboard/ch2": ch2.app,
     "/dashboard/ch3": ch3.app,
 })
 

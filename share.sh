@@ -6,13 +6,6 @@ port="${PORT:-8966}"
 tools_dir="$(pwd)/.tools"
 cloudflared_bin="${CLOUDFLARED_BIN:-}"
 
-if [ ! -x .venv/bin/python ]; then
-  python3 -m venv .venv
-fi
-if ! .venv/bin/python -c 'import flask, dash, pandas, plotly, numpy, waitress' >/dev/null 2>&1; then
-  .venv/bin/python -m pip install -r requirements.txt --quiet --disable-pip-version-check
-fi
-
 if [ -z "$cloudflared_bin" ]; then
   if command -v cloudflared >/dev/null 2>&1; then
     cloudflared_bin="$(command -v cloudflared)"
@@ -43,7 +36,8 @@ if curl --fail --silent --max-time 2 "http://127.0.0.1:$port/" >/dev/null; then
   exit 1
 fi
 
-.venv/bin/waitress-serve --listen="127.0.0.1:$port" app:application &
+uv run --no-project --cache-dir "${UV_CACHE_DIR:-.cache/uv}" --python "${UV_PYTHON:-3.12}" \
+  --with-requirements requirements.txt waitress-serve --listen="127.0.0.1:$port" app:application &
 server_pid=$!
 cleanup() {
   kill "$server_pid" 2>/dev/null || true

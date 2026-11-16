@@ -7,6 +7,7 @@
   <meta name="description" content="COMP7507 Group 3 · A five-chapter visual report on the changing AI frontier, 2023–2026">
   <title>From Open Labs to Closed Empires · Visual Report</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="/static/chart-theme.css">
 </head>
 <body>
   <header class="topbar">
@@ -76,7 +77,7 @@
           <div class="chapter-heading"><div><p class="chapter-kicker">CHAPTER 03 <span>· THRESHOLD</span></p><h2>The Cost Cliff: How expensive is frontier competition?</h2></div></div>
           <p class="chapter-lead">A single GPT-4.5 training run is estimated at $366M. Against that benchmark, the dashboard’s illustrative academic budgets cover just 0.005–0.04 of a run, and some startup funding falls short. Academia’s share of notable models fell from 15.1% to 1.1% between 2023 and 2025.</p>
           <div class="finding"><span>KEY FINDING</span><strong>Priced out of frontier pre-training, academia’s share of notable models collapsed</strong><small>15.1% in 2023 → 1.1% in 2025. The charts do not establish that cost caused the decline.</small></div>
-          <div class="chart-grid"><figure class="figure"><div class="figure-head"><span>FIG 3.1</span><h3>Training cost growth and distribution</h3></div><div class="chart plotly-chart" id="chart-ch3-scatter"></div><figcaption>Estimated costs or FLOP-based proxies, in 2023 USD on a log scale. Color marks sector; shape marks weight access. The dashed line is a fitted trend, not audited spending.</figcaption></figure><figure class="figure"><div class="figure-head"><span>FIG 3.2</span><h3>Origins of notable models</h3></div><div class="chart chart-with-legend" id="chart-ch3-bars"></div><figcaption>Share of AI Index notable models by origin, 2023–2025. Categories are mutually exclusive.</figcaption></figure></div>
+          <div class="chart-grid"><figure class="figure"><div class="figure-head"><span>FIG 3.1</span><h3>Training cost growth and distribution</h3></div><div class="chart cost-chart" id="chart-ch3-scatter"></div><figcaption>Estimated costs or FLOP-based proxies, in 2023 USD on a log scale. Color marks sector; shape marks weight access. The dashed line is a fitted trend, not audited spending.</figcaption></figure><figure class="figure"><div class="figure-head"><span>FIG 3.2</span><h3>Origins of notable models</h3></div><div class="chart chart-with-legend" id="chart-ch3-bars"></div><figcaption>Share of AI Index notable models by origin, 2023–2025. Categories are mutually exclusive.</figcaption></figure></div>
           <a class="chapter-door" href="/dashboard/ch3/"><span class="door-index">EXPLORE 03</span><span><strong>Explore training-cost evidence</strong><small>Inspect funding thresholds, compute, and organization types</small></span><b>↗</b></a>
         </div>
 
@@ -105,7 +106,9 @@
   </main>
 
   <footer><div class="wrap footer-inner"><span>FRONTIER / FIELD NOTES</span><span>COMP7507 · GROUP 3 · 2026</span><a href="#top">Back to top ↑</a></div></footer>
-  <script src="{{ url_for('static', filename='vendor/plotly.min.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='vendor/echarts.min.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='chart-theme.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='chapter3-charts.js') }}" defer></script>
   <script src="{{ url_for('static', filename='report.js') }}" defer></script>
 </body>
 </html>

@@ -8,3 +8,4 @@ preview*
 .env.*
 *.log
 .pytest_cache/
+.cache/

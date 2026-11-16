@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "description": "Standalone baseline fixture for flow.mjs. Top 10 and Top 50 share arrays are copied unchanged from the original site JSON; no values are recomputed from the derived site data.",
+  "sourcePathBase": "Paths in catalogSource and sources are relative to the original Vis-group-project repository root.",
+  "extractedFields": [
+    "shares.10",
+    "shares.50"
+  ],
+  "catalogSource": {
+    "path": "sites/ch1-arena-fieldnotes/public/data/arena/index.json",
+    "sha256": "330eb649243652f5dd65714643d4fc169837e779744e79cfe263e16ed62c1286",
+    "bytes": 6764
+  },
+  "sources": [
+    {
+      "categoryId": "overall",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/overall.json",
+      "sha256": "699a86c5971f2b16a05bf6cc67fc927392792ca76e85df9bd9fd22d30bec0d39",
+      "bytes": 1003113
+    },
+    {
+      "categoryId": "coding",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/coding.json",
+      "sha256": "a96de91b9c7939b689c6d37e64add5ba11aef1ae366ef0369190ccc3012cdc7b",
+      "bytes": 897588
+    },
+    {
+      "categoryId": "math",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/math.json",
+      "sha256": "bda7e929cfd98db45033e2361d2395c12eb072276b31d6dc5db5264f48c66fe2",
+      "bytes": 804069
+    },
+    {
+      "categoryId": "instruction_following",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/instruction_following.json",
+      "sha256": "1fdaa6b219116f37be5db0e657647e7e8bbf937fbf150f913baca9a1eeb073be",
+      "bytes": 815908
+    },
+    {
+      "categoryId": "creative_writing",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/creative_writing.json",
+      "sha256": "e081eda713c9307658d04140b46d3e106e43b52b27014abbf4a5307eb93ad98c",
+      "bytes": 725930
+    },
+    {
+      "categoryId": "expert",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/expert.json",
+      "sha256": "34d5409e295fe12bff68d01e843b2a451d0f5949cb925da8c6f6900b97b7eee7",
+      "bytes": 380867
+    },
+    {
+      "categoryId": "hard_prompts",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/hard_prompts.json",
+      "sha256": "0d019368b8b32e860d3fea87f3447e1deb1128ea781bbbd122587263f50e14e7",
+      "bytes": 855492
+    },
+    {
+      "categoryId": "hard_prompts_english",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/hard_prompts_english.json",
+      "sha256": "8ade837ebd4a7acba07b90bc8b2be28e92542089ee774d12e50535b4beb0b957",
+      "bytes": 863019
+    },
+    {
+      "categoryId": "longer_query",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/longer_query.json",
+      "sha256": "e0f806c4ddeeddcbbac3a7548595d1836e00f4ea645e2d5e7745b4f85c6787ea",
+      "bytes": 900193
+    },
+    {
+      "categoryId": "multi_turn",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/multi_turn.json",
+      "sha256": "ffaa2db24407c43a933c78e8c8bbb2c11c732b6d7f675833c463c04237bc31e9",
+      "bytes": 825594
+    },
+    {
+      "categoryId": "chinese",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/chinese.json",
+      "sha256": "537fd9cf0a5b89db1d6996db50c79a2d9f6cc793912c85e08edb2bab4ddae9a1",
+      "bytes": 884134
+    },
+    {
+      "categoryId": "english",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/english.json",
+      "sha256": "09b473f83f3ad70be9e71b6edc4db1921e84889fc742ea4001899c44658e12ce",
+      "bytes": 905108
+    },
+    {
+      "categoryId": "non_english",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/non_english.json",
+      "sha256": "e583da4092b34005feecab841a860743f5a8c6d5e77e510ca72ba1b3cd1b7df1",
+      "bytes": 187391
+    },
+    {
+      "categoryId": "french",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/french.json",
+      "sha256": "af988fb7257b69f9146604b2c6fc0c7540e93f2ed879753aa0d7d125d70b2c55",
+      "bytes": 842997
+    },
+    {
+      "categoryId": "german",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/german.json",
+      "sha256": "1f6d25e18aef2b0d29f6da87cb5ac0877dcae78fdf53d19e99530207e9d8c1d9",
+      "bytes": 809829
+    },
+    {
+      "categoryId": "japanese",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/japanese.json",
+      "sha256": "35421cb3fb7294fee08a4b417f75ed5d5e97cc7b5248c44448b342a95e12dd5b",
+      "bytes": 786610
+    },
+    {
+      "categoryId": "korean",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/korean.json",
+      "sha256": "1ba8d86447dcab4bfa4c403f3bbbf5bb4cc1818536ef9406be47e1b15afd2dd6",
+      "bytes": 762437
+    },
+    {
+      "categoryId": "spanish",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/spanish.json",
+      "sha256": "15d5aa396433824310e00ee897a97c9388b3e829152953acb9c4ae958b34c4d0",
+      "bytes": 796867
+    },
+    {
+      "categoryId": "russian",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/russian.json",
+      "sha256": "efde6d26a87ca9a3dc4da1c8075cb60a00929e5d9594cd3973cf53f93feb3336",
+      "bytes": 828403
+    },
+    {
+      "categoryId": "polish",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/polish.json",
+      "sha256": "188373757f8842c22adfa17c988d5b1537d7eaa159ef6c327419f68f1a18af5a",
+      "bytes": 165469
+    },
+    {
+      "categoryId": "industry_software_and_it_services",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/industry_software_and_it_services.json",
+      "sha256": "855a2760fcfe074e7241c97336836dae3bc1522f3c25454becf81802903f569c",
+      "bytes": 401601
+    },
+    {
+      "categoryId": "industry_mathematical",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/industry_mathematical.json",
+      "sha256": "7376039696bf92866697a2207bf766041a09ba12ed03b5b741e343fb88fefc2e",
+      "bytes": 392536
+    },
+    {
+      "categoryId": "industry_business_and_management_and_financial_operations",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/industry_business_and_management_and_financial_operations.json",
+      "sha256": "7d3d6b3fe85bcf4b56ee22f124c6d2558a8b3801a5cdd10132f32c66700e6d1c",
+      "bytes": 393939
+    },
+    {
+      "categoryId": "industry_legal_and_government",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/industry_legal_and_government.json",
+      "sha256": "227d208c2e4b3a5d92032d596b979fde6623234db20c151a15406f764c2519fd",
+      "bytes": 386796
+    },
+    {
+      "categoryId": "industry_medicine_and_healthcare",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/industry_medicine_and_healthcare.json",
+      "sha256": "a116eccf0dfa7c98ed7c5a4b92d516271b7ee1c27af1cc9bea22504a11971acb",
+      "bytes": 387261
+    },
+    {
+      "categoryId": "industry_life_and_physical_and_social_science",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/industry_life_and_physical_and_social_science.json",
+      "sha256": "ffd61e0ea56c654ae547a54e443784894f345460329664057b8c3ba3f759a732",
+      "bytes": 397318
+    },
+    {
+      "categoryId": "industry_entertainment_and_sports_and_media",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/industry_entertainment_and_sports_and_media.json",
+      "sha256": "b23dd1e1c99f9c40570fd4f35f2e71ce8e8fcb87257f4799de5521852aece472",
+      "bytes": 398653
+    },
+    {
+      "categoryId": "industry_writing_and_literature_and_language",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/industry_writing_and_literature_and_language.json",
+      "sha256": "182e95c81ad92d5a5f206da704cae19d700075d59af8aada6f48664fa3207f5b",
+      "bytes": 395491
+    },
+    {
+      "categoryId": "exclude_ties",
+      "path": "sites/ch1-arena-fieldnotes/public/data/arena/exclude_ties.json",
+      "sha256": "fb98db700346388ad2c434d50d9a278ba0aa06daaa635a3af9fc7b0e2014113c",
+      "bytes": 885277
+    }
+  ],
+  "fixture": {
+    "path": "baseline-shares.json",
+    "sha256": "d95746aed24d86c37f2cbffc7b8ddd25b994477b2987bbdc1a0bf3936e501618",
+    "bytes": 199326,
+    "categories": 29,
+    "shareRows": 1282
+  }
+}
