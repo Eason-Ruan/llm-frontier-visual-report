@@ -1,0 +1,252 @@
+{
+  "funding": [
+    {
+      "entity": "Typical Academic Lab",
+      "date": "2023–2025",
+      "funding_usd": 2000000,
+      "val": 0.005,
+      "backer": null,
+      "scale": "Academic Research Lab (< 1% of 1 Run)"
+    },
+    {
+      "entity": "Top University Allocation",
+      "date": "2023–2025",
+      "funding_usd": 15000000,
+      "val": 0.041,
+      "backer": null,
+      "scale": "Premier Academic HPC (Only ~4% of 1 Run)"
+    },
+    {
+      "entity": "AI21 Labs",
+      "date": "2023.09",
+      "funding_usd": 300000000,
+      "val": 0.82,
+      "backer": null,
+      "scale": "$3.0B Valuation (Under-threshold)"
+    },
+    {
+      "entity": "Runway",
+      "date": "2023.06",
+      "funding_usd": 315000000,
+      "val": 0.86,
+      "backer": null,
+      "scale": "$5.3B Valuation (Under-threshold)"
+    },
+    {
+      "entity": "Minimax",
+      "date": "2024.03",
+      "funding_usd": 390000000,
+      "val": 1.07,
+      "backer": "Tencent, Alibaba, HongShan",
+      "scale": "$4.2B Valuation (Zero buffer margin)"
+    },
+    {
+      "entity": "Cohere",
+      "date": "2024.07",
+      "funding_usd": 500000000,
+      "val": 1.37,
+      "backer": "Nvidia, Cisco, AMD, Inovia",
+      "scale": "$6.8B Valuation (Narrow safety buffer)"
+    },
+    {
+      "entity": "Together AI",
+      "date": "2024.03",
+      "funding_usd": 800000000,
+      "val": 2.19,
+      "backer": "Salesforce Ventures, Nvidia",
+      "scale": "$8.3B GPU Cloud & Datacenter"
+    },
+    {
+      "entity": "Inflection AI",
+      "date": "2023.06",
+      "funding_usd": 1300000000,
+      "val": 3.55,
+      "backer": "Microsoft, Reid Hoffman, Bill Gates",
+      "scale": "$4.0B Unicorn (Absorbed by MS)"
+    },
+    {
+      "entity": "Mistral AI",
+      "date": "2024.06",
+      "funding_usd": 3000000000,
+      "val": 8.2,
+      "backer": "Microsoft, Nvidia, Bpifrance",
+      "scale": "$24.0B European AI Champion"
+    },
+    {
+      "entity": "Moonshot AI",
+      "date": "2024.02",
+      "funding_usd": 3500000000,
+      "val": 9.56,
+      "backer": "Alibaba, HongShan",
+      "scale": "$30.0B Valuation (China 'AI Tiger')"
+    },
+    {
+      "entity": "DeepSeek",
+      "date": "2025.01",
+      "funding_usd": 7500000000,
+      "val": 20.49,
+      "backer": "High-Flyer Capital (Top Quant Hedge Fund)",
+      "scale": "$75.0B Decacorn with GPU Clusters"
+    }
+  ],
+  "compute": {
+    "Academia": {
+      "models": [
+        {
+          "date": "2023-04-10",
+          "flops": 1.2e+23,
+          "model": "MegaScale (Peking/Tsinghua)"
+        },
+        {
+          "date": "2023-07-20",
+          "flops": 3.8e+23,
+          "model": "BLOOM-176B Followup"
+        },
+        {
+          "date": "2024-02-12",
+          "flops": 1.1e+24,
+          "model": "Amber (Stanford)"
+        },
+        {
+          "date": "2024-02-28",
+          "flops": 2.4e+24,
+          "model": "OLMo-7B (AI2/UW)"
+        },
+        {
+          "date": "2024-05-30",
+          "flops": 3.2e+24,
+          "model": "Map-Neo (Tsinghua)"
+        },
+        {
+          "date": "2025-01-20",
+          "flops": 1.6e+24,
+          "model": "EurLLM-7B"
+        }
+      ],
+      "trend": [
+        [
+          "2023-03-01",
+          2e+23
+        ],
+        [
+          "2025-03-01",
+          3.2e+24
+        ]
+      ]
+    },
+    "Industry": {
+      "models": [
+        {
+          "date": "2023-03-14",
+          "flops": 2.1e+25,
+          "model": "GPT-4"
+        },
+        {
+          "date": "2023-05-10",
+          "flops": 8.5e+24,
+          "model": "PaLM 2"
+        },
+        {
+          "date": "2023-12-06",
+          "flops": 9e+25,
+          "model": "Gemini 1.0 Ultra"
+        },
+        {
+          "date": "2024-03-04",
+          "flops": 5e+25,
+          "model": "Claude 3 Opus"
+        },
+        {
+          "date": "2024-04-18",
+          "flops": 3.1e+25,
+          "model": "Llama 3-70B"
+        },
+        {
+          "date": "2024-05-14",
+          "flops": 1.5e+26,
+          "model": "Gemini 1.5 Pro"
+        },
+        {
+          "date": "2024-07-23",
+          "flops": 3.8e+26,
+          "model": "Llama 3.1-405B"
+        },
+        {
+          "date": "2024-08-14",
+          "flops": 1.2e+26,
+          "model": "Grok 2"
+        },
+        {
+          "date": "2024-12-26",
+          "flops": 1.8e+26,
+          "model": "DeepSeek-V3"
+        },
+        {
+          "date": "2025-02-17",
+          "flops": 5.2e+26,
+          "model": "Grok 3"
+        },
+        {
+          "date": "2025-02-27",
+          "flops": 6.6e+26,
+          "model": "GPT-4.5"
+        }
+      ],
+      "trend": [
+        [
+          "2023-03-01",
+          1.2e+25
+        ],
+        [
+          "2025-03-01",
+          5.2e+26
+        ]
+      ]
+    }
+  },
+  "sector": {
+    "years": [
+      "2023",
+      "2024",
+      "2025"
+    ],
+    "shares": {
+      "Academia": [
+        15.1,
+        3.1,
+        1.1
+      ],
+      "Industry-academia collaboration": [
+        25.2,
+        12.2,
+        5.3
+      ],
+      "Other": [
+        1.7,
+        2,
+        2.1
+      ],
+      "Industry": [
+        58,
+        82.7,
+        91.6
+      ]
+    }
+  },
+  "spending": {
+    "years": [
+      "2024",
+      "2025"
+    ],
+    "labs": {
+      "Anthropic": [
+        2.5,
+        7
+      ],
+      "OpenAI": [
+        4,
+        16
+      ]
+    }
+  }
+}

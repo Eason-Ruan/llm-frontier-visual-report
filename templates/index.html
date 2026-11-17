@@ -7,24 +7,37 @@
   <meta name="description" content="COMP7507 Group 3 · A five-chapter visual report on the changing AI frontier, 2023–2026">
   <title>From Open Labs to Closed Empires · Visual Report</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="/static/chart-theme.css">
 </head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="#top" aria-label="Return to report home"><span class="brand-mark">F</span><span>FRONTIER <i>/</i> FIELD NOTES</span></a>
-    <nav class="topnav" aria-label="Main navigation">
-      <a href="#story">Read the report</a><a href="#method">Methods & limits</a>
+<body data-initial-chapter="{{ initial_chapter|default('') }}">
+  <button class="mobile-menu" type="button" aria-controls="report-navigation" aria-expanded="false">☰ <span>Navigation</span></button>
+  <button class="drawer-scrim" type="button" aria-label="Close navigation" hidden></button>
+  <aside class="persistent-sidebar" id="report-navigation" aria-label="Report navigation">
+    <a class="sidebar-brand" href="/#top" data-story-link><strong>FRONTIER /</strong><b>FIELD NOTES</b><small>2023—2026 · VISUAL REPORT</small></a>
+    <nav class="nav-group storyboard-nav" aria-label="Storyboard chapters"><h2>STORYBOARD</h2>
+      <a class="nav-item" href="/#ch1" data-story-link>01 · The flip</a>
+      <a class="nav-item" href="/#ch2" data-story-link>02 · Divergence</a>
+      <a class="nav-item" href="/#ch3" data-story-link>03 · The cost cliff</a>
+      <a class="nav-item" href="/#ch4" data-story-link>04 · Parallel trends</a>
+      <a class="nav-item" href="/#ch5" data-story-link>05 · Synthesis</a>
     </nav>
-    <span class="course">COMP7507 · GROUP 3</span>
-  </header>
+    <nav class="nav-group" aria-label="Dashboards"><h2>DASHBOARDS</h2>
+      <a class="nav-item" href="/explore/ch1/" data-explore="ch1">01 · Rankings & openness</a>
+      <a class="nav-item" href="/explore/ch2/" data-explore="ch2">02 · Scale & output</a>
+      <a class="nav-item" href="/explore/ch3/" data-explore="ch3">03 · Cost & academia</a>
+      <a class="nav-item" href="/explore/ch4/" data-explore="ch4">04 · Ecosystem</a>
+      <a class="nav-item" href="/explore/ch5/" data-explore="ch5">05 · Synthesis</a>
+    </nav><div class="sidebar-space"></div>
+    <a class="nav-item" href="/#method" data-story-link>Methods &amp; limits</a>
+    <small class="sidebar-credit">COMP7507 · GROUP 3</small>
+  </aside>
 
   <main id="top">
     <section class="hero wrap" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow"><span class="live-dot"></span> AN EVIDENCE-LED VISUAL REPORT <span class="slash">/</span> 2023—2026</p>
         <h1 id="hero-title">From Open Labs<br>to <span>Closed Empires?</span></h1>
         <p class="hero-en">How the LLM frontier changed, 2023–2026</p>
         <p class="hero-intro">How did the top of the LLM leaderboard change? What can training costs, organizational scale, and evaluation attention explain? Follow five chapters of evidence, then explore each interactive dashboard.</p>
-        <div class="hero-actions"><a class="primary-btn" href="#story">Start reading <span>↓</span></a></div>
       </div>
       <div class="hero-visual" aria-label="Five-chapter research map">
         <div class="visual-top"><span>RESEARCH MAP</span><span>01 — 05</span></div>
@@ -45,15 +58,6 @@
     </section>
 
     <div class="report-shell wrap" id="story">
-      <aside class="rail" aria-label="Chapter directory">
-        <div class="rail-head">Contents</div>
-        <a href="#ch1"><em>01</em><span>The Flip<small>LEADERBOARD SHIFT</small></span></a>
-        <a href="#ch2"><em>02</em><span>Divergence<small>ORGANIZATIONAL SCALE</small></span></a>
-        <a href="#ch3"><em>03</em><span>The Cost Cliff<small>TRAINING THRESHOLD</small></span></a>
-        <a href="#ch4"><em>04</em><span>Parallel Trends<small>ECOSYSTEM CONTEXT</small></span></a>
-        <a href="#ch5"><em>05</em><span>Synthesis<small>LINKED EVIDENCE</small></span></a>
-        <div class="rail-foot">Use each chapter card to open the full dashboard created by its team member.</div>
-      </aside>
 
       <div class="story-content">
         <div class="chapter" id="ch1">
@@ -61,7 +65,14 @@
           <p class="chapter-lead">Begin with the observed shift. In the last available Arena overall snapshot of February 2024, 40 of the Top 50 models had open weights. By September 2026, only nine did. Every model in the final Top 10 was closed-weight. Open weights do not necessarily mean fully open-source AI.</p>
           <div class="finding"><span>KEY FINDING</span><strong>Open-weight share of the Top 50: 80% → 18%</strong><small>February 2024 to September 2026; both snapshots contain 50 models. The path was not monotonic.</small></div>
           <div class="chart-grid"><figure class="figure"><div class="figure-head"><span>FIG 1.1</span><h3>Open-weight share of the Top 50</h3></div><div class="chart chart-with-legend" id="chart-ch1-line"></div><figcaption>Last observed snapshot of each month; the line begins once a full Top 50 is available. Source: Arena overall.</figcaption></figure><figure class="figure"><div class="figure-head"><span>FIG 1.2</span><h3>Frontier rank gap</h3></div><div class="chart chart-with-legend" id="chart-ch1-gap"></div><figcaption>Best open-weight rank minus best closed-weight rank. Positive values mean closed-weight leads; negative values mean open-weight leads. Monthly Arena overall snapshots from December 2023; rank difference does not measure capability.</figcaption></figure></div>
-          <a class="chapter-door" href="/dashboard/ch1/?view=dashboard"><span class="door-index">EXPLORE 01</span><span><strong>Explore the monthly leaderboard dashboard</strong><small>Change the month, Top N, and license categories</small></span><b>↗</b></a>
+          <section class="dashboard-panel" id="panel-ch1" data-chapter="ch1" aria-label="Chapter 01 interactive dashboard">
+            <header class="dashboard-panel-header">
+              <div class="panel-description"><h3>Chapter 01 dashboard</h3><p>Arena rankings and license composition</p></div>
+              <div class="fullscreen-heading"><span>CHAPTER 1</span><h2>Who holds the frontier positions?</h2></div>
+              <div class="panel-actions"><button class="panel-help" type="button" aria-label="About Chapter 1 dashboard"><img src="/static/ui/dashboard-help.svg" alt="" width="21.58" height="21.58"></button><button class="panel-toggle" type="button" aria-expanded="false" aria-controls="body-ch1">Expand ↓</button><button class="panel-fullscreen" type="button">Full screen ↗</button><button class="panel-exit" type="button">Back to story ↙</button></div>
+            </header>
+            <div class="dashboard-panel-body" id="body-ch1" hidden><p class="embed-status" role="status">Loading interactive dashboard…</p></div>
+          </section>
         </div>
 
         <div class="chapter" id="ch2">
@@ -69,15 +80,29 @@
           <p class="chapter-lead">The ranking shift leads us from models to the organizations behind them. One chart traces market capitalization for five listed companies; the other traces reported revenue run rates for five independent AI labs. Together they show two paths of organizational growth, measured in different ways and observed at different intervals.</p>
           <div class="finding"><span>KEY FINDINGS</span><strong>Upward in the economy, downward in academic contributions</strong><small>1. Both the companies and the labs are experiencing an upward trend in terms of economics (market value and revenue).<br>2. However, the companies have seen a significant decline in academic contributions.</small></div>
           <div class="chart-grid"><figure class="figure"><div class="figure-head"><span>FIG 2.1</span><h3>Listed-company market-cap trajectories</h3></div><div class="chart chart-with-legend" id="chart-ch2-line"></div><figcaption>Month-end closing price × historical shares outstanding, in USD billions. 2026 is partial.</figcaption></figure><figure class="figure"><div class="figure-head"><span>FIG 2.2</span><h3>AI-lab revenue run rates</h3></div><div class="chart chart-with-legend" id="chart-ch2-labs"></div><figcaption>Reported annualized revenue run rates, USD billions, 2023–2026. Lines connect sparse, unaudited snapshots; this is not realized annual revenue. Source: Stanford AI Index, Figure 4.2.18 via the Chapter 2 dashboard.</figcaption></figure></div>
-          <a class="chapter-door" href="/dashboard/ch2/"><span class="door-index">EXPLORE 02</span><span><strong>Open the scale and output dashboard</strong><small>Filter organizations, years, and comparison groups</small></span><b>↗</b></a>
+          <section class="dashboard-panel" id="panel-ch2" data-chapter="ch2" aria-label="Chapter 02 interactive dashboard">
+            <header class="dashboard-panel-header">
+              <div class="panel-description"><h3>Chapter 02 dashboard</h3><p>Market capitalization, revenue and academic output</p></div>
+              <div class="fullscreen-heading"><span>CHAPTER 2</span><h2>Big companies and AI labs are on different tracks</h2></div>
+              <div class="panel-actions"><button class="panel-help" type="button" aria-label="About Chapter 2 dashboard"><img src="/static/ui/dashboard-help.svg" alt="" width="21.58" height="21.58"></button><button class="panel-toggle" type="button" aria-expanded="false" aria-controls="body-ch2">Expand ↓</button><button class="panel-fullscreen" type="button">Full screen ↗</button><button class="panel-exit" type="button">Back to story ↙</button></div>
+            </header>
+            <div class="dashboard-panel-body" id="body-ch2" hidden><p class="embed-status" role="status">Loading interactive dashboard…</p></div>
+          </section>
         </div>
 
         <div class="chapter" id="ch3">
           <div class="chapter-heading"><div><p class="chapter-kicker">CHAPTER 03 <span>· THRESHOLD</span></p><h2>The Cost Cliff: How expensive is frontier competition?</h2></div></div>
           <p class="chapter-lead">A single GPT-4.5 training run is estimated at $366M. Against that benchmark, the dashboard’s illustrative academic budgets cover just 0.005–0.04 of a run, and some startup funding falls short. Academia’s share of notable models fell from 15.1% to 1.1% between 2023 and 2025.</p>
           <div class="finding"><span>KEY FINDING</span><strong>Priced out of frontier pre-training, academia’s share of notable models collapsed</strong><small>15.1% in 2023 → 1.1% in 2025. The charts do not establish that cost caused the decline.</small></div>
-          <div class="chart-grid"><figure class="figure"><div class="figure-head"><span>FIG 3.1</span><h3>Training cost growth and distribution</h3></div><div class="chart plotly-chart" id="chart-ch3-scatter"></div><figcaption>Estimated costs or FLOP-based proxies, in 2023 USD on a log scale. Color marks sector; shape marks weight access. The dashed line is a fitted trend, not audited spending.</figcaption></figure><figure class="figure"><div class="figure-head"><span>FIG 3.2</span><h3>Origins of notable models</h3></div><div class="chart chart-with-legend" id="chart-ch3-bars"></div><figcaption>Share of AI Index notable models by origin, 2023–2025. Categories are mutually exclusive.</figcaption></figure></div>
-          <a class="chapter-door" href="/dashboard/ch3/"><span class="door-index">EXPLORE 03</span><span><strong>Explore training-cost evidence</strong><small>Inspect funding thresholds, compute, and organization types</small></span><b>↗</b></a>
+          <div class="chart-grid"><figure class="figure"><div class="figure-head"><span>FIG 3.1</span><h3>Training cost growth and distribution</h3></div><div class="chart cost-chart" id="chart-ch3-scatter"></div><figcaption>Estimated costs or FLOP-based proxies, in 2023 USD on a log scale. Color marks sector; shape marks weight access. The dashed line is a fitted trend, not audited spending.</figcaption></figure><figure class="figure"><div class="figure-head"><span>FIG 3.2</span><h3>Origins of notable models</h3></div><div class="chart chart-with-legend" id="chart-ch3-bars"></div><figcaption>Share of AI Index notable models by origin, 2023–2025. Categories are mutually exclusive.</figcaption></figure></div>
+          <section class="dashboard-panel" id="panel-ch3" data-chapter="ch3" aria-label="Chapter 03 interactive dashboard">
+            <header class="dashboard-panel-header">
+              <div class="panel-description"><h3>Chapter 03 dashboard</h3><p>Training costs, funding thresholds and model origins</p></div>
+              <div class="fullscreen-heading"><span>CHAPTER 3</span><h2>How expensive is frontier competition?</h2></div>
+              <div class="panel-actions"><button class="panel-help" type="button" aria-label="About Chapter 3 dashboard"><img src="/static/ui/dashboard-help.svg" alt="" width="21.58" height="21.58"></button><button class="panel-toggle" type="button" aria-expanded="false" aria-controls="body-ch3">Expand ↓</button><button class="panel-fullscreen" type="button">Full screen ↗</button><button class="panel-exit" type="button">Back to story ↙</button></div>
+            </header>
+            <div class="dashboard-panel-body" id="body-ch3" hidden><p class="embed-status" role="status">Loading interactive dashboard…</p></div>
+          </section>
         </div>
 
         <div class="chapter" id="ch4">
@@ -85,14 +110,28 @@
           <p class="chapter-lead">Chapter 4 looks beyond the leaderboard. From 2024 to 2025, proprietary models gained a larger share of recorded Arena evaluations while new Hugging Face repositories also grew. The dashboard adds shifting model exposure, slowing but positive U.S. talent netflow, and rising business AI adoption. These parallel measures provide ecosystem context, not evidence of user migration or causation.</p>
           <div class="finding"><span>KEY FINDING</span><strong>Proprietary evaluation share and HF additions rose together</strong><small>Across 2024Q1–2025Q4, the share moved from 50.28% to 56.17%, while quarterly new repositories moved from 118,252 to 332,098. Both series fluctuated.</small></div>
           <div class="chart-grid"><figure class="figure"><div class="figure-head"><span>FIG 4.1</span><h3>Recorded-evaluation share and new supply</h3></div><div class="chart" id="chart-ch4-dual"></div><figcaption>The panels use different units and denominators, so no difference is calculated. Repository counts are not a measure of open-weight models or quality.</figcaption></figure><figure class="figure"><div class="figure-head"><span>FIG 4.2</span><h3>U.S. business AI adoption</h3></div><div class="chart chart-with-legend" id="chart-ch4-adoption"></div><figcaption>National BTOS Q7, 2023–2025. It covers broad AI use among U.S. employer businesses and does not identify the models they use.</figcaption></figure></div>
-          <a class="chapter-door" href="/dashboard/ch4/"><span class="door-index">EXPLORE 04</span><span><strong>Open the four-panel dashboard</strong><small>Compare share &amp; supply, model exposure, talent, and adoption</small></span><b>↗</b></a>
+          <section class="dashboard-panel" id="panel-ch4" data-chapter="ch4" aria-label="Chapter 04 interactive dashboard">
+            <header class="dashboard-panel-header">
+              <div class="panel-description"><h3>Chapter 04 dashboard</h3><p>Evaluation share, HF supply, exposure, talent and adoption</p></div>
+              <div class="fullscreen-heading"><span>CHAPTER 4</span><h2>Attention, supply, talent and adoption</h2></div>
+              <div class="panel-actions"><button class="panel-help" type="button" aria-label="About Chapter 4 dashboard"><img src="/static/ui/dashboard-help.svg" alt="" width="21.58" height="21.58"></button><button class="panel-toggle" type="button" aria-expanded="false" aria-controls="body-ch4">Expand ↓</button><button class="panel-fullscreen" type="button">Full screen ↗</button><button class="panel-exit" type="button">Back to story ↙</button></div>
+            </header>
+            <div class="dashboard-panel-body" id="body-ch4" hidden><p class="embed-status" role="status">Loading interactive dashboard…</p></div>
+          </section>
         </div>
 
         <div class="chapter chapter-last" id="ch5">
           <div class="chapter-heading"><div><p class="chapter-kicker">CHAPTER 05 <span>· SYNTHESIS</span></p><h2>Synthesis: Closed Frontier, Open Commons</h2></div></div>
           <p class="chapter-lead">The synthesis follows three questions: what changed in the ranking, which organizations lead, and how rank relates to cost, recorded votes, and listed-company market context. Choose an organization in the linked view to compare these measures directly.</p>
           <div class="synthesis-points"><div><b>01 · Frontier concentration</b><span>The latest top ten is proprietary and comes from three organizations.</span></div><div><b>02 · Open-weight competition</b><span>Open-weight challengers still reach high ranks beyond the latest top ten.</span></div><div><b>03 · Different measures</b><span>Ranks, costs, votes, and market figures provide related but distinct evidence.</span></div></div>
-          <a class="chapter-door" href="/dashboard/ch5/"><span class="door-index">EXPLORE 05</span><span><strong>Open the synthesis dashboard</strong><small>Follow the shift, explore organizations, and compare four measures</small></span><b>↗</b></a>
+          <section class="dashboard-panel" id="panel-ch5" data-chapter="ch5" aria-label="Chapter 05 interactive dashboard">
+            <header class="dashboard-panel-header">
+              <div class="panel-description"><h3>Chapter 05 dashboard</h3><p>The ranking shift and linked organization evidence</p></div>
+              <div class="fullscreen-heading"><span>CHAPTER 5</span><h2>Closed Frontier, Open Commons</h2></div>
+              <div class="panel-actions"><button class="panel-help" type="button" aria-label="About Chapter 5 dashboard"><img src="/static/ui/dashboard-help.svg" alt="" width="21.58" height="21.58"></button><button class="panel-toggle" type="button" aria-expanded="false" aria-controls="body-ch5">Expand ↓</button><button class="panel-fullscreen" type="button">Full screen ↗</button><button class="panel-exit" type="button">Back to story ↙</button></div>
+            </header>
+            <div class="dashboard-panel-body" id="body-ch5" hidden><p class="embed-status" role="status">Loading interactive dashboard…</p></div>
+          </section>
         </div>
       </div>
     </div>
@@ -102,10 +141,13 @@
       <div class="method-grid"><div><b>01</b><strong>Compare metrics on their own terms</strong><span>Market value, revenue run rate, evaluation share, and repository additions have different definitions and denominators.</span></div><div><b>02</b><strong>Keep missing values missing</strong><span>Unobserved months, organizations, and metrics remain blank. Several series have incomplete coverage in 2026.</span></div><div><b>03</b><strong>Parallel trends are not causation</strong><span>Cost growth, ranking changes, and business adoption can coincide. The available data do not establish movement of resources or users.</span></div></div>
     </section>
     <section class="credits wrap" aria-label="Team members"><span>GROUP 3 / CONTRIBUTORS</span><div><b>Ruan Lixin</b> <small>Ch1</small></div><div><b>Qi Yingying</b> <small>Ch2</small></div><div><b>Wong Yan Yuet</b> <small>Ch3</small></div><div><b>Wang Ling</b> <small>Ch4</small></div><div><b>Huang Shan</b> <small>Ch5 · Report</small></div></section>
-  </main>
-
   <footer><div class="wrap footer-inner"><span>FRONTIER / FIELD NOTES</span><span>COMP7507 · GROUP 3 · 2026</span><a href="#top">Back to top ↑</a></div></footer>
-  <script src="{{ url_for('static', filename='vendor/plotly.min.js') }}" defer></script>
+  </main>
+  <dialog class="shell-help"><form method="dialog"><button aria-label="Close help">×</button><h2>About this dashboard</h2><p></p></form></dialog>
+  <script src="{{ url_for('static', filename='vendor/echarts.min.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='chart-theme.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='chapter3-charts.js') }}" defer></script>
   <script src="{{ url_for('static', filename='report.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='shell.js') }}" defer></script>
 </body>
 </html>

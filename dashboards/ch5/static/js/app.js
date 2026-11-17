@@ -19,14 +19,13 @@ const state = {
   orgById: {},
 };
 
+const RC = window.ReportCharts;
+const C = RC.colors;
 const COLORS = {
-  big7: ['#257f70', '#678caa', '#d47662', '#8aab8f', '#e5b45e', '#8e83ad', '#3e5c59'],
-  small: '#8e9f95',
-  openPerm: '#3b9d7e',
-  openRest: '#83b994',
-  closed: '#d47662',
-  unknown: '#b6c4b8',
-  accent: '#257f70',
+  openPerm: C.permissive,
+  openRest: C.restricted,
+  closed: C.closed,
+  unknown: C.unknown,
 };
 
 const el = (id) => document.getElementById(id);
@@ -38,7 +37,10 @@ async function boot() {
   try {
     const bundle = await fetch(API.bundle).then((r) => r.json());
     state.data = bundle;
-    (bundle.orgs || []).forEach((o) => (state.orgById[o.id] = o));
+    (bundle.orgs || []).forEach(o => {
+      o.color = RC.orgColor(o.id);
+      state.orgById[o.id] = o;
+    });
 
     buildDots();
     renderKpis();
@@ -67,6 +69,7 @@ async function boot() {
       getSelection: () => state.selected,
       select: (id) => selectOrg(id, 'external'),
     };
+    window.Ch5Layout?.connect();
     window.addEventListener('resize', () => Object.values(state.charts).forEach((c) => c && c.resize()));
     window.addEventListener('hashchange', () => {
       const s = String(location.hash || '').replace(/^#/, '');
@@ -107,6 +110,7 @@ function go(i) {
     const h = '#' + state.pages[state.page];
     if (location.hash !== h) history.replaceState(null, '', h);
   }
+  window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected, category: state.groupFilter });
   window.scrollTo({ top: 0, behavior: 'smooth' });
   setTimeout(() => Object.values(state.charts).forEach((c) => c && c.resize()), 60);
 }
@@ -125,12 +129,13 @@ function selectOrg(id, source = 'shell') {
   renderOrgCard();
   renderLinked();
   if (state.charts.exceptions) renderExceptions();
+  window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected, category: state.groupFilter });
 }
 
 /* ---------------------------------------------------------------- helper: chart init */
 function chart(id) {
   if (!el(id)) return null;
-  if (!state.charts[id]) state.charts[id] = echarts.init(el(id), null, { renderer: 'canvas' });
+  if (!state.charts[id]) state.charts[id] = RC.init(el(id));
   return state.charts[id];
 }
 
@@ -172,11 +177,11 @@ function renderFlip() {
     const items = [...p.items].reverse(); // rank 1 at top
     c.setOption({
       animationDuration: 400,
-      grid: { left: 96, right: 46, top: 30, bottom: 26 },
+      grid: { left: 96, right: 46, top: 46, bottom: 26 },
       title: {
         text: `${k === 0 ? '(a)' : '(b)'} ${p.date}`,
         subtext: `pool of ${p.pool_size} models` + (p.open_share_top50 != null ? ` · Top-50 ${p.permissive_share_top50}–${p.open_share_top50}%` : ''),
-        left: 6, top: 0, textStyle: { fontSize: 12, fontWeight: 600 }, subtextStyle: { fontSize: 10, color: '#8b97ab' },
+        left: 6, top: 0, textStyle: { fontSize: 12, fontWeight: 600 }, subtextStyle: { fontSize: 11, color: C.muted },
       },
       tooltip: {
         trigger: 'item',
@@ -186,20 +191,20 @@ function renderFlip() {
         },
       },
       xAxis: {
-        type: 'value', name: 'rating', nameTextStyle: { fontSize: 10 }, splitNumber: 3,
-        axisLabel: { fontSize: 9 },
+        type: 'value', name: 'rating', nameTextStyle: { fontSize: 11 }, splitNumber: 3,
+        axisLabel: { fontSize: 11 },
         // ratings cluster in ~1030-1200: cropping the axis keeps the length readable
         min: (v) => Math.floor(v.min - 12), max: (v) => Math.ceil(v.max + 4),
-        splitLine: { lineStyle: { color: '#eef1f5' } },
+        splitLine: { lineStyle: { color: C.grid } },
       },
       yAxis: {
         type: 'category', data: items.map((x) => x.model),
-        axisLabel: { fontSize: 9, width: 88, overflow: 'truncate' }, axisTick: { show: false }, axisLine: { show: false },
+        axisLabel: { fontSize: 11, width: 88, overflow: 'truncate' }, axisTick: { show: false }, axisLine: { show: false },
       },
       series: [{
         type: 'bar', barWidth: '62%',
         data: items.map((x) => ({ value: x.rating, itemStyle: { color: accessColor(x.access), borderRadius: [0, 4, 4, 0] } })),
-        label: { show: true, position: 'right', fontSize: 9, color: '#55627a', formatter: (p) => items[p.dataIndex].org },
+        label: { show: true, position: 'right', fontSize: 11, color: C.muted, formatter: (p) => items[p.dataIndex].org },
       }],
     }, true);
   });
@@ -226,18 +231,18 @@ function renderMiniVote() {
       { left: 52, right: 20, top: 186, height: 76 },
     ],
     xAxis: [
-      { type: 'category', data: qs, gridIndex: 0, axisLabel: { fontSize: 10 }, axisTick: { show: false } },
-      { type: 'category', data: qs, gridIndex: 1, axisLabel: { fontSize: 10 }, axisTick: { show: false } },
+      { type: 'category', data: qs, gridIndex: 0, axisLabel: { fontSize: 11 }, axisTick: { show: false } },
+      { type: 'category', data: qs, gridIndex: 1, axisLabel: { fontSize: 11 }, axisTick: { show: false } },
     ],
     yAxis: [
       {
         type: 'value', gridIndex: 0, min: 44, max: 66, name: '%', nameLocation: 'middle', nameGap: 34, nameRotate: 90,
-        nameTextStyle: { fontSize: 9, color: '#8b97ab' }, axisLabel: { fontSize: 9 },
-        splitLine: { lineStyle: { color: '#eef1f5' } },
+        nameTextStyle: { fontSize: 11, color: C.muted }, axisLabel: { fontSize: 11 },
+        splitLine: { lineStyle: { color: C.grid } },
       },
       {
         type: 'value', gridIndex: 1, name: 'Repositories', nameLocation: 'middle', nameGap: 44, nameRotate: 90,
-        nameTextStyle: { fontSize: 9, color: '#8b97ab' }, axisLabel: { fontSize: 9, formatter: (v) => (v / 1000) + 'k' },
+        nameTextStyle: { fontSize: 11, color: C.muted }, axisLabel: { fontSize: 11, formatter: (v) => (v / 1000) + 'k' },
         splitLine: { show: false },
       },
     ],
@@ -245,7 +250,7 @@ function renderMiniVote() {
       {
         name: 'Proprietary vote share', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: mainLine,
         smooth: false, symbolSize: 5, lineStyle: { width: 2.2, color: COLORS.closed }, itemStyle: { color: COLORS.closed },
-        markLine: { silent: true, symbol: 'none', data: [{ xAxis: '2025Q4' }], lineStyle: { type: 'dashed', color: '#b7791f' }, label: { fontSize: 9, formatter: 'End of main window' } },
+        markLine: { silent: true, symbol: 'none', data: [{ xAxis: '2025Q4' }], lineStyle: { type: 'dashed', color: C.gold }, label: { fontSize: 11, formatter: 'End of main window' } },
       },
       {
         name: '2026 extension (no matching HF data)', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: extension,
@@ -254,11 +259,11 @@ function renderMiniVote() {
       },
       {
         name: 'Fixed set of 61 models', type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: fixed,
-        symbolSize: 4, lineStyle: { width: 1.4, type: 'dashed', color: '#8b97ab' }, itemStyle: { color: '#8b97ab' },
+        symbolSize: 4, lineStyle: { width: 1.4, type: 'dashed', color: C.unknown }, itemStyle: { color: C.unknown },
       },
       {
         name: 'New HF repositories per quarter', type: 'bar', xAxisIndex: 1, yAxisIndex: 1, data: hf,
-        itemStyle: { color: '#aed6f1' }, barWidth: '58%',
+        itemStyle: { color: C.supply }, barWidth: '58%',
       },
     ],
   }, true);
@@ -285,6 +290,7 @@ function rankOption(highlight, subsetOnly) {
       connectNulls: false,
       showSymbol: false,
       smooth: false,
+      itemStyle: { color: o.color },
       lineStyle: {
         width: isSel ? 3.2 : o.group === 'big7' ? 1.5 : 1.1,
         color: o.color,
@@ -293,7 +299,7 @@ function rankOption(highlight, subsetOnly) {
       },
       emphasis: { focus: 'series' },
       z: isSel ? 10 : 2,
-      endLabel: isSel ? { show: true, formatter: o.name, fontSize: 10, color: o.color } : undefined,
+      endLabel: isSel ? { show: true, formatter: o.name, fontSize: 11, color: o.color } : undefined,
     });
   });
   return {
@@ -311,18 +317,18 @@ function rankOption(highlight, subsetOnly) {
     grid: { left: 54, right: 96, top: 36, bottom: 40 },
     xAxis: {
       type: 'category', data: months, boundaryGap: false,
-      axisLabel: { fontSize: 9, interval: 0, formatter: (value, index) => index === 0 || value.endsWith('-01') || index === months.length - 1 ? value : '' }, axisTick: { show: false },
+      axisLabel: { fontSize: 11, interval: 0, formatter: (value, index) => index === 0 || value.endsWith('-01') || index === months.length - 1 ? value : '' }, axisTick: { show: false },
     },
     yAxis: {
       type: state.logScale ? 'log' : 'value',
       inverse: true, min: 1,
       name: 'rank', nameLocation: 'middle', nameGap: 34, nameRotate: 90,
-      nameTextStyle: { fontSize: 10, color: '#8b97ab' },
-      axisLabel: { fontSize: 9 }, splitLine: { lineStyle: { color: '#eef1f5' } },
+      nameTextStyle: { fontSize: 11, color: C.muted },
+      axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { color: C.grid } },
     },
     legend: {
-      type: 'scroll', top: 0, left: 0, right: 0, textStyle: { fontSize: 10 },
-      itemWidth: 14, itemHeight: 8, pageIconSize: 9, pageTextStyle: { fontSize: 9 },
+      type: 'scroll', top: 0, left: 0, right: 0, textStyle: { fontSize: 11 },
+      itemWidth: 14, itemHeight: 8, pageIconSize: 9, pageTextStyle: { fontSize: 11 },
     },
     series,
   };
@@ -409,9 +415,9 @@ function renderLinked() {
   const c1 = chart('L_rank');
   if (c1) {
     const opt = rankOption(sel, true);
-    opt.grid = { left: 56, right: 24, top: 14, bottom: 34 };
+    opt.grid = { left: 56, right: 80, top: 14, bottom: 34 };
     opt.legend = { show: false };
-    opt.xAxis.axisLabel = { fontSize: 9, interval: 8, rotate: 30 };
+    opt.xAxis.axisLabel = { fontSize: 11, interval: 8, rotate: 30 };
     c1.setOption(opt, true);
     c1.off('click');
     c1.on('click', (p) => {
@@ -426,8 +432,7 @@ function renderLinked() {
     const pts = d.costs.map((x) => ({ value: [x.date, x.cost_musd], org: x.org, model: x.model, access: x.access }));
     el('costCoverage').textContent = sel && !pts.some((x) => x.org === sel)
       ? 'No matching Epoch cost record for the selected organization; other organizations remain as context.' : '';
-    const mk = (o) => (o === sel ? { symbolSize: 9, itemStyle: { borderColor: '#1c2530', borderWidth: 1.2 } } : { symbolSize: 6 });
-    const mkColor = (a) => ({ open: COLORS.openPerm, hosted: COLORS.closed,
+    const mkColor = (a) => ({ open: C.open, hosted: COLORS.closed,
       unreleased: COLORS.unknown, unknown: COLORS.unknown }[a] || COLORS.unknown);
     const accessLabel = (a) => ({ open: 'Open weights', hosted: 'API / hosted only',
       unreleased: 'Unreleased', unknown: 'Unknown' }[a] || 'Unknown');
@@ -441,20 +446,21 @@ function renderLinked() {
           return `<b>${v.model}</b><br>${state.orgById[v.org] ? state.orgById[v.org].name : v.org}<br>Cost: $${fmtNum(v.value[1], 1)}M<br>Access: ${accessLabel(v.access)}`;
         },
       },
-      xAxis: { type: 'time', axisLabel: { fontSize: 9 }, splitLine: { show: false } },
+      useUTC: true,
+      xAxis: { type: 'time', axisLabel: { fontSize: 11 }, splitLine: { show: false } },
       yAxis: {
         type: 'log', min: 0.01,
         name: 'US$M (log)', nameLocation: 'middle', nameGap: 40, nameRotate: 90,
-        nameTextStyle: { fontSize: 9, color: '#8b97ab' },
-        axisLabel: { fontSize: 9, formatter: (v) => v }, splitLine: { lineStyle: { color: '#eef1f5' } },
+        nameTextStyle: { fontSize: 11, color: C.muted },
+        axisLabel: { fontSize: 11, formatter: (v) => v }, splitLine: { lineStyle: { color: C.grid } },
       },
       series: [{
         type: 'scatter',
-        data: pts.filter((x) => x.org !== sel).map((x) => ({ ...x, itemStyle: { color: mkColor(x.access), opacity: 0.55 }, ...mk(x.org) })),
+        data: pts.filter((x) => x.org !== sel).map((x) => ({ ...x, symbolSize: 6, itemStyle: { color: mkColor(x.access), opacity: 0.55 } })),
         name: 'Other organizations',
       }, {
         type: 'scatter',
-        data: pts.filter((x) => x.org === sel).map((x) => ({ ...x, itemStyle: { color: mkColor(x.access), opacity: 1 }, ...mk(x.org) })),
+        data: pts.filter((x) => x.org === sel).map((x) => ({ ...x, symbolSize: 9, itemStyle: { color: mkColor(x.access), opacity: 1, borderColor: C.ink, borderWidth: 1.2 } })),
         name: 'Selected organization',
       }],
     }, true);
@@ -471,9 +477,10 @@ function renderLinked() {
       return {
         name: o.name, type: 'line', data: d.votes.series[o.id] || [],
         showSymbol: false, connectNulls: false,
+        itemStyle: { color: isSel ? o.color : C.unknown },
         lineStyle: {
           width: isSel ? 2.8 : 1,
-          color: isSel ? o.color : '#d5dbe4',
+          color: isSel ? o.color : C.unknown,
           opacity: sel ? (isSel ? 1 : 0.8) : 0.6,
         },
         areaStyle: isSel ? { opacity: 0.10, color: o.color } : undefined,
@@ -494,11 +501,11 @@ function renderLinked() {
         },
       },
       legend: { show: false },
-      xAxis: { type: 'category', data: months, axisLabel: { fontSize: 9, interval: 4 }, axisTick: { show: false } },
+      xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11, interval: 4 }, axisTick: { show: false } },
       yAxis: {
         type: 'value', name: '%', nameLocation: 'middle', nameGap: 32, nameRotate: 90,
-        nameTextStyle: { fontSize: 9, color: '#8b97ab' }, axisLabel: { fontSize: 9 },
-        splitLine: { lineStyle: { color: '#eef1f5' } },
+        nameTextStyle: { fontSize: 11, color: C.muted }, axisLabel: { fontSize: 11 },
+        splitLine: { lineStyle: { color: C.grid } },
       },
       series,
     }, true);
@@ -513,9 +520,10 @@ function renderLinked() {
     const selectedTicker = sel && state.orgById[sel] ? state.orgById[sel].ticker : null;
     const lineSeries = tk.map((t, i) => ({
       name: t, type: 'line', xAxisIndex: 0, yAxisIndex: 0, data: listed[t].index,
+      itemStyle: { color: RC.orgColor(t) },
       showSymbol: false, lineStyle: { width: t === selectedTicker ? 2.8 : 1.6,
         opacity: selectedTicker && t !== selectedTicker ? 0.35 : 1,
-        color: ['#678caa', '#8aab8f', '#257f70', '#e5b45e', '#9ab47f'][i % 5] },
+        color: RC.orgColor(t) },
     }));
     el('marketCoverage').textContent = sel && !selectedTicker
       ? 'No direct listed-company series for this organization. These five share-price indices provide market context only.'
@@ -524,14 +532,14 @@ function renderLinked() {
       animationDuration: 300,
       tooltip: { trigger: 'axis', valueFormatter: (value) => value == null ? '—' : `${Number(value).toFixed(1)} (Jan 2023 = 100)` },
       legend: {
-        top: 0, right: 0, textStyle: { fontSize: 9 }, itemWidth: 12, itemHeight: 7,
+        top: 0, right: 0, textStyle: { fontSize: 11 }, itemWidth: 12, itemHeight: 7,
         data: tk.slice(),
       },
       grid: { left: 52, right: 16, top: 34, bottom: 38 },
-      xAxis: { type: 'category', data: months, axisLabel: { fontSize: 9, interval: 5, rotate: 30 }, axisTick: { show: false } },
+      xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11, interval: 5, rotate: 30 }, axisTick: { show: false } },
       yAxis: { type: 'value', name: 'index', nameLocation: 'middle', nameGap: 34, nameRotate: 90,
-        nameTextStyle: { fontSize: 9, color: '#8b97ab' }, axisLabel: { fontSize: 9 },
-        splitLine: { lineStyle: { color: '#eef1f5' } } },
+        nameTextStyle: { fontSize: 11, color: C.muted }, axisLabel: { fontSize: 11 },
+        splitLine: { lineStyle: { color: C.grid } } },
       series: lineSeries,
     }, true);
     c4.off('click');
@@ -551,19 +559,20 @@ function renderExceptions() {
   const pick = ['deepseek', 'alibaba', 'meta'].filter((id) => d.rank.open_series && d.rank.open_series[id]);
   const series = pick.map((id) => ({
     name: state.orgById[id].name, type: 'line', data: d.rank.open_series[id], showSymbol: false, connectNulls: false,
+    itemStyle: { color: state.orgById[id].color },
     lineStyle: { width: state.selected === id ? 3 : 2, color: state.orgById[id].color },
   }));
   c.setOption({
     animationDuration: 300,
     grid: { left: 46, right: 16, top: 30, bottom: 34 },
     tooltip: { trigger: 'axis' },
-    legend: { top: 0, textStyle: { fontSize: 10 }, itemWidth: 14, itemHeight: 8 },
-    xAxis: { type: 'category', data: months, axisLabel: { fontSize: 9, interval: 4 }, axisTick: { show: false } },
+    legend: { top: 0, textStyle: { fontSize: 11 }, itemWidth: 14, itemHeight: 8 },
+    xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11, interval: 4 }, axisTick: { show: false } },
     yAxis: {
       type: 'log', inverse: true, min: 1,
       name: 'rank', nameLocation: 'middle', nameGap: 30, nameRotate: 90,
-      nameTextStyle: { fontSize: 9, color: '#8b97ab' },
-      axisLabel: { fontSize: 9 }, splitLine: { lineStyle: { color: '#eef1f5' } },
+      nameTextStyle: { fontSize: 11, color: C.muted },
+      axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { color: C.grid } },
     },
     series,
   }, true);
@@ -574,6 +583,7 @@ function bindUI() {
   el('prevBtn').onclick = () => go(state.page - 1);
   el('nextBtn').onclick = () => go(state.page + 1);
   document.addEventListener('keydown', (e) => {
+    if (e.target.closest('input, select, textarea, [contenteditable=true]')) return;
     if (e.key === 'ArrowLeft') go(state.page - 1);
     if (e.key === 'ArrowRight') go(state.page + 1);
   });
@@ -584,12 +594,14 @@ function bindUI() {
       b.classList.add('active');
       state.groupFilter = b.dataset.g;
       renderRankChart();
+      window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected, category: state.groupFilter });
     };
   });
   el('logToggle').onclick = () => {
     state.logScale = !state.logScale;
     el('logToggle').textContent = 'Log scale: ' + (state.logScale ? 'on' : 'off');
     renderRankChart();
+    renderLinked();
   };
 }
 

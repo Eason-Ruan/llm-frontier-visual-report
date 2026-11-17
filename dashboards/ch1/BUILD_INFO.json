@@ -1,0 +1,175 @@
+{
+  "source": "sites/arena-weight-flow",
+  "command": "npm run build:report",
+  "mode": "report",
+  "renderer": "D3 scales, stack/area/line geometry and timer/interpolation on Canvas; SVG monthly ruler",
+  "dashboardOnly": true,
+  "language": "en",
+  "files": [
+    {
+      "path": "assets/index-DJG2Rftp.css",
+      "bytes": 27895,
+      "sha256": "b32c0dd10f0f74947feb9965c210b4fdb65245058429a4b2c9452fcbdea10963"
+    },
+    {
+      "path": "assets/index-xb30X8WJ.js",
+      "bytes": 333033,
+      "sha256": "2d0555382821bca9745a81de3e6cbdfe7cbb88530d528504b2a1f8a481229d6a"
+    },
+    {
+      "path": "data/arena/chinese.json",
+      "bytes": 191339,
+      "sha256": "3b2000f5fa0b84aa337e1a0dfb5342469842bfe57bfc281ab1695cbf3fd5e12d"
+    },
+    {
+      "path": "data/arena/coding.json",
+      "bytes": 187047,
+      "sha256": "8728158a8f3815916a845a6baa99bab3e8d95abf48e3f3fd546443727b60625d"
+    },
+    {
+      "path": "data/arena/creative_writing.json",
+      "bytes": 148380,
+      "sha256": "3786b9de6541b385d6733ab66a32afc627ec665e44e5d5e4d2d3e7ea08db7e9e"
+    },
+    {
+      "path": "data/arena/english.json",
+      "bytes": 192712,
+      "sha256": "1ada8f5bb21ce809162014c50a6172a2eb7172445dd7ad2296a3a36ee75c3c10"
+    },
+    {
+      "path": "data/arena/exclude_ties.json",
+      "bytes": 186222,
+      "sha256": "f44ca7a3765ac9468e9a70e22a8416a2cfd6c85f9e38e26a4220750530ab3eff"
+    },
+    {
+      "path": "data/arena/expert.json",
+      "bytes": 69736,
+      "sha256": "0310346119a8d206c601f62997ac5c0866b6e3d46ccf1500682704b9c8398d6a"
+    },
+    {
+      "path": "data/arena/french.json",
+      "bytes": 186272,
+      "sha256": "5eb33f04e7ac86be80397af13253917b244c7c9dd922284447d285548d6d219f"
+    },
+    {
+      "path": "data/arena/german.json",
+      "bytes": 179655,
+      "sha256": "510db3069018610b8556106d7e42224daac629a2b2ce548ed690b05aa3da02e6"
+    },
+    {
+      "path": "data/arena/hard_prompts_english.json",
+      "bytes": 180548,
+      "sha256": "139c75cfc7006f1de8e5e85334e8b606da89a608a14038702f051120f1150920"
+    },
+    {
+      "path": "data/arena/hard_prompts.json",
+      "bytes": 180094,
+      "sha256": "70adaf5889a30f36092ea6aa5df963157e290cf0afae59f6efeaa7567b15a125"
+    },
+    {
+      "path": "data/arena/index.json",
+      "bytes": 6764,
+      "sha256": "330eb649243652f5dd65714643d4fc169837e779744e79cfe263e16ed62c1286"
+    },
+    {
+      "path": "data/arena/industry_business_and_management_and_financial_operations.json",
+      "bytes": 69551,
+      "sha256": "e59c11df7d470c252e887574cbb3ea3574c82144ff5cc671162acd1f6c94d366"
+    },
+    {
+      "path": "data/arena/industry_entertainment_and_sports_and_media.json",
+      "bytes": 68956,
+      "sha256": "f376d4fb08e819775b2b4776c8c919efd07f1a0effca3bfa0980387d594b50ae"
+    },
+    {
+      "path": "data/arena/industry_legal_and_government.json",
+      "bytes": 69394,
+      "sha256": "3c89a46d5fc2758c8761b7c5faf82f0e2accc9194c16dfeaca01c838d63066b8"
+    },
+    {
+      "path": "data/arena/industry_life_and_physical_and_social_science.json",
+      "bytes": 69221,
+      "sha256": "a177f63b4b1a345b0fef54aa9c4eb86749f4e0f40510731e8495c6405946ac84"
+    },
+    {
+      "path": "data/arena/industry_mathematical.json",
+      "bytes": 69510,
+      "sha256": "6ff0e77235d57e4fb322e810262b3d2b5feb9dbe78a89b05756a2d5371d54e3c"
+    },
+    {
+      "path": "data/arena/industry_medicine_and_healthcare.json",
+      "bytes": 69152,
+      "sha256": "9e55818415e0fea8a87853e214d00642c18fd4ef5f63382ca0fcd819e7950f2c"
+    },
+    {
+      "path": "data/arena/industry_software_and_it_services.json",
+      "bytes": 69830,
+      "sha256": "a577dfdb1fe4c1bf983b9e7db74ee9d8bf84b5711db3b87ba471cbcbd2dadf31"
+    },
+    {
+      "path": "data/arena/industry_writing_and_literature_and_language.json",
+      "bytes": 69294,
+      "sha256": "2ef42a3b0ebee1d3067662d0adf1ec317621109ffdcdaf65932e886417bcd559"
+    },
+    {
+      "path": "data/arena/instruction_following.json",
+      "bytes": 167738,
+      "sha256": "1d909da60ea7dd4473dd59d20177795d17e66c98db6ab6ca3a9cb1ed325746d2"
+    },
+    {
+      "path": "data/arena/japanese.json",
+      "bytes": 173144,
+      "sha256": "fbaabef001c649182fc2948a5c8e3af49f751cf0aa625f85815ef2159736f36e"
+    },
+    {
+      "path": "data/arena/korean.json",
+      "bytes": 177307,
+      "sha256": "d67d71b597c3a47b5564c20259101e321d4878fe9773d1fd5a596f5f55ba2b9d"
+    },
+    {
+      "path": "data/arena/longer_query.json",
+      "bytes": 192722,
+      "sha256": "41fed9d87c55e803cdeae38bcea86030d5a40ec9861c2417e3a278a6683b88b1"
+    },
+    {
+      "path": "data/arena/math.json",
+      "bytes": 167588,
+      "sha256": "89e6a6f34dd0ae979b997f48968b1213a70a4a8307193567de29566616cac7d3"
+    },
+    {
+      "path": "data/arena/multi_turn.json",
+      "bytes": 173659,
+      "sha256": "2542e47b61066e030cf4434cafdf7db2d1d686415f16abd3d5d47817f5e3a1fb"
+    },
+    {
+      "path": "data/arena/non_english.json",
+      "bytes": 38695,
+      "sha256": "a2e788086a875d0579b094df218e1b307cd98d8e31a97f6b9a23b88d01b790f4"
+    },
+    {
+      "path": "data/arena/overall.json",
+      "bytes": 228555,
+      "sha256": "080cc236a46fcc6e70c12b201afa708f38d085e538a39d52aa68816650e61397"
+    },
+    {
+      "path": "data/arena/polish.json",
+      "bytes": 38658,
+      "sha256": "d40ff4fa5274bb43989285a578cbc55b379cf82407c760ec625e29793f647c42"
+    },
+    {
+      "path": "data/arena/provenance.json",
+      "bytes": 10421,
+      "sha256": "9c727ba2d17b5da53d93841ddba19a3c9d58224c113444601c21b69060265386"
+    },
+    {
+      "path": "data/arena/russian.json",
+      "bytes": 180024,
+      "sha256": "4c5a750bfad436efb85b5122a5145bafa2b207411b91cd72bce072cd67389e6a"
+    },
+    {
+      "path": "data/arena/spanish.json",
+      "bytes": 173558,
+      "sha256": "7ed14bb187ad867c9016e1c4396053a53e06881192af875fa6f1afc580dbe072"
+    }
+  ]
+}

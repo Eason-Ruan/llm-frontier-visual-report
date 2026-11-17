@@ -1,0 +1,41 @@
+@font-face { font-family: Inter; font-style: normal; font-weight: 100 900; font-display: swap; src: url('/static/fonts/InterVariable.woff2') format('woff2'); }
+@font-face { font-family: Inter; font-style: italic; font-weight: 100 900; font-display: swap; src: url('/static/fonts/InterVariable-Italic.woff2') format('woff2'); }
+:root {
+  --report-font:
+    Inter, sans-serif;
+  --report-ink: #203b37;
+  --report-muted: #536b65;
+  --report-paper: #f7f8f4;
+  --report-surface: #fff;
+  --report-header: #173c39;
+  --report-border: #dbe4db;
+  --report-space-xs: 4px;
+  --report-space-sm: 8px;
+  --report-space-md: 12px;
+  --report-space-lg: 16px;
+  --report-space-xl: 24px;
+  --report-radius-sm: 6px;
+  --report-radius-md: 10px;
+  --report-radius-lg: 12px;
+  --report-radius-xl: 16px;
+  --report-text-caption: 10px;
+  --report-text-small: 12px;
+  --report-text-body: 14px;
+  --report-text-insight: 17px;
+  --report-text-heading: 18px;
+  --report-leading-small: 18px;
+  --report-leading-heading: 24px;
+  --report-leading-insight: 25px;
+  --report-open: #26846c;
+  --report-closed: #bd6250;
+  --report-unknown: #84928d;
+}
+body {
+  font-family: var(--report-font);
+}
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}

@@ -80,7 +80,22 @@ CH5_STATE = {"selection": None, "last_sync": None, "source": "report"}
 
 @app.get("/")
 def home():
-    return render_template("index.html")
+    return render_template("index.html", initial_chapter="")
+
+
+@app.get("/explore/<name>/")
+def explore(name):
+    if name not in {"ch1", "ch2", "ch3", "ch4", "ch5"}:
+        abort(404)
+    return render_template("index.html", initial_chapter=name)
+
+
+@app.get("/explore/<name>")
+def explore_redirect(name):
+    if name not in {"ch1", "ch2", "ch3", "ch4", "ch5"}:
+        abort(404)
+    query = "?" + request.query_string.decode("latin-1") if request.query_string else ""
+    return redirect(f"/explore/{name}/{query}", code=308)
 
 
 @app.get("/api/report-data")
@@ -136,12 +151,12 @@ def import_app(name, path):
     return module
 
 
-# Dash and the Chapter 3 Flask app keep their original callbacks and routes.
+# Chapters 2 and 3 serve normalized observations to their ECharts frontends.
 sys.path.insert(0, str(DASHBOARDS / "ch2"))
 ch2 = import_app("chapter2_app", DASHBOARDS / "ch2/app.py")
 ch3 = import_app("chapter3_app", DASHBOARDS / "ch3/app.py")
 application = DispatcherMiddleware(app, {
-    "/dashboard/ch2": ch2.app.server,
+    "/dashboard/ch2": ch2.app,
     "/dashboard/ch3": ch3.app,
 })
 

@@ -9,7 +9,7 @@ cloudflared_bin="${CLOUDFLARED_BIN:-}"
 if [ ! -x .venv/bin/python ]; then
   python3 -m venv .venv
 fi
-if ! .venv/bin/python -c 'import flask, dash, pandas, plotly, numpy, waitress' >/dev/null 2>&1; then
+if ! .venv/bin/python -c 'import flask, pandas, plotly, numpy, waitress' >/dev/null 2>&1; then
   .venv/bin/python -m pip install -r requirements.txt --quiet --disable-pip-version-check
 fi
 

@@ -49,13 +49,23 @@
     },
     {
       "path": "index.html",
-      "bytes": 105230,
-      "sha256": "6ce535aa39f68d8990026911c2f9a0deee80025469b43bfd77ef526475c40e0b"
+      "bytes": 84346,
+      "sha256": "f427faaeea1554a9105b574cc6d0a87c769a44603d9d81a381f7fb9e165eb9a2"
     },
     {
       "path": "README.md",
       "bytes": 11070,
       "sha256": "50d75a7d765d2021219bf2a0d2071b8e74e643aacec85b7662733f1bad95dfda"
+    },
+    {
+      "path": "app.js",
+      "bytes": 37618,
+      "sha256": "c97cf0e8dc69bf81eb6804e13ab3a9d636040d8ceaa3a5b74c236d9d60598c34"
     }
+  ],
+  "shared_assets": [
+    "../../static/vendor/echarts.min.js",
+    "../../static/chart-theme.js",
+    "../../static/chart-theme.css"
   ]
 }
