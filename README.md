@@ -31,7 +31,7 @@ After editing the main report's HTML, CSS, or JavaScript, teammates can refresh 
 | Ch2 | `/explore/ch2/` | Qi Yingying | Market capitalization, revenue, and academic output |
 | Ch3 | `/explore/ch3/` | Wong Yan Yuet | Training costs, funding threshold, and model origins |
 | Ch4 | `/explore/ch4/` | Wang Ling | Evaluation share, HF supply, exposure, talent, and adoption |
-| Ch5 | `/explore/ch5/` | Huang Shan | Ranking shift, open-weight challengers, and linked organization evidence |
+| Ch5 | `/explore/ch5/` | Huang Shan | Ranking shift and linked organization evidence in two views |
 
 Shared color, spacing, radius, typography tokens and local Inter font faces live in `static/chart-theme.css`; `static/embed.css` defines the common dashboard cards and help dialog. The Storyboard and all `/explore/chN/` routes use the same master shell with a persistent sidebar. Each chapter dashboard starts collapsed and can expand inline or open full screen. Full screen keeps the green title and navigation visible; **Back to story** and Escape return to the report. Browser Back also restores the previous view.
 

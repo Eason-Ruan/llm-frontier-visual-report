@@ -10,10 +10,9 @@ const API = {
 
 const state = {
   data: null,
-  pages: ['overview', 'institutions', 'linked'],
+  pages: ['overview', 'linked'],
   page: 0,
   selected: null,
-  groupFilter: 'big7',
   logScale: true,
   charts: {},
   orgById: {},
@@ -46,14 +45,12 @@ async function boot() {
     renderKpis();
     renderFlip();
     renderMiniVote();
-    renderRankChart();
-    renderExceptions();
     renderOrgCard();
     renderLinked();
     bindUI();
     // deep link: /#linked  → straight to that page (also survives refresh)
     const slug = typeof location !== 'undefined' ? String(location.hash || '').replace(/^#/, '') : '';
-    const idx = state.pages.indexOf(slug);
+    const idx = state.pages.indexOf(slug === 'institutions' ? 'linked' : slug);
     go(idx >= 0 ? idx : 0);
     // deep link: ?sel=anthropic  → pre-select an org (handy for demos and screenshots)
     let preset = null;
@@ -65,7 +62,7 @@ async function boot() {
     // integration hooks for chapter modules / external pages
     window.DSH_CH5 = {
       setSelection: (id) => selectOrg(id, 'external'),
-      goToPage: (slug2) => { const i = state.pages.indexOf(slug2); if (i >= 0) go(i); },
+      goToPage: (slug2) => { const i = state.pages.indexOf(slug2 === 'institutions' ? 'linked' : slug2); if (i >= 0) go(i); },
       getSelection: () => state.selected,
       select: (id) => selectOrg(id, 'external'),
     };
@@ -73,7 +70,7 @@ async function boot() {
     window.addEventListener('resize', () => Object.values(state.charts).forEach((c) => c && c.resize()));
     window.addEventListener('hashchange', () => {
       const s = String(location.hash || '').replace(/^#/, '');
-      const i = state.pages.indexOf(s);
+      const i = state.pages.indexOf(s === 'institutions' ? 'linked' : s);
       if (i >= 0 && i !== state.page) go(i);
     });
     el('footMeta').textContent = `${bundle.meta.course} · Research synthesis`;
@@ -102,7 +99,7 @@ function go(i) {
   document.querySelectorAll('.page').forEach((s) => s.classList.toggle('hidden', s.dataset.page !== state.pages[state.page]));
   document.querySelectorAll('#dots span').forEach((s, k) => s.classList.toggle('active', k === state.page));
   el('pageIndex').textContent = `${state.page + 1} / ${state.pages.length}`;
-  const titles = { overview: 'The shift', institutions: 'The organizations', linked: 'Compare evidence' };
+  const titles = { overview: 'The shift', linked: 'Compare the evidence' };
   el('pageTitle').textContent = titles[state.pages[state.page]];
   el('prevBtn').disabled = state.page === 0;
   el('nextBtn').disabled = state.page === state.pages.length - 1;
@@ -110,7 +107,7 @@ function go(i) {
     const h = '#' + state.pages[state.page];
     if (location.hash !== h) history.replaceState(null, '', h);
   }
-  window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected, category: state.groupFilter });
+  window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected });
   window.scrollTo({ top: 0, behavior: 'smooth' });
   setTimeout(() => Object.values(state.charts).forEach((c) => c && c.resize()), 60);
 }
@@ -125,11 +122,9 @@ function selectOrg(id, source = 'shell') {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ orgId: id, source }),
   }).catch(() => {});
-  renderRankChart();
   renderOrgCard();
   renderLinked();
-  if (state.charts.exceptions) renderExceptions();
-  window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected, category: state.groupFilter });
+  window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected });
 }
 
 /* ---------------------------------------------------------------- helper: chart init */
@@ -269,17 +264,15 @@ function renderMiniVote() {
   }, true);
 }
 
-/* ---------------------------------------------------------------- rank chart (page 2 + linked) */
-function rankOption(highlight, subsetOnly) {
+/* ---------------------------------------------------------------- rank chart for linked comparison */
+function rankOption(highlight) {
   const d = state.data;
   const months = d.rank.months;
   const orgsMeta = d.orgs;
   const series = [];
   orgsMeta.forEach((o, i) => {
-    if (subsetOnly) {
-      // linked view: keep the big labs + whoever is selected (avoids 22 jagged lines)
-      if (o.group !== 'big7' && o.id !== highlight) return;
-    } else if (state.groupFilter !== 'all' && o.group !== state.groupFilter) return;
+    // Keep the frontier labs and the selected organization to avoid 22 overlapping lines.
+    if (o.group !== 'big7' && o.id !== highlight) return;
     const data = d.rank.series[o.id];
     if (!data) return;
     const isSel = highlight === o.id;
@@ -332,23 +325,6 @@ function rankOption(highlight, subsetOnly) {
     },
     series,
   };
-}
-
-function renderRankChart() {
-  const c = chart('rankChart');
-  if (!c) return;
-  c.setOption(rankOption(state.selected, false), true);
-  c.off('click');
-  c.on('click', (p) => {
-    if (!p || !p.seriesName) return;
-    const o = state.data.orgs.find((x) => x.name === p.seriesName);
-    if (o) selectOrg(o.id);
-  });
-  c.off('legendselectchanged');
-  c.on('legendselectchanged', (p) => {
-    const o = state.data.orgs.find((x) => x.name === p.name);
-    if (o && p.selected[p.name]) selectOrg(o.id);
-  });
 }
 
 /* ---------------------------------------------------------------- page 2: org card + single vote */
@@ -414,7 +390,7 @@ function renderLinked() {
   // ① rank
   const c1 = chart('L_rank');
   if (c1) {
-    const opt = rankOption(sel, true);
+    const opt = rankOption(sel);
     opt.grid = { left: 56, right: 80, top: 14, bottom: 34 };
     opt.legend = { show: false };
     opt.xAxis.axisLabel = { fontSize: 11, interval: 8, rotate: 30 };
@@ -550,34 +526,6 @@ function renderLinked() {
   }
 }
 
-/* ---------------------------------------------------------------- open-weight challengers */
-function renderExceptions() {
-  const d = state.data;
-  const c = chart('exceptions');
-  if (!c) return;
-  const months = d.rank.months;
-  const pick = ['deepseek', 'alibaba', 'meta'].filter((id) => d.rank.open_series && d.rank.open_series[id]);
-  const series = pick.map((id) => ({
-    name: state.orgById[id].name, type: 'line', data: d.rank.open_series[id], showSymbol: false, connectNulls: false,
-    itemStyle: { color: state.orgById[id].color },
-    lineStyle: { width: state.selected === id ? 3 : 2, color: state.orgById[id].color },
-  }));
-  c.setOption({
-    animationDuration: 300,
-    grid: { left: 46, right: 16, top: 30, bottom: 34 },
-    tooltip: { trigger: 'axis' },
-    legend: { top: 0, textStyle: { fontSize: 11 }, itemWidth: 14, itemHeight: 8 },
-    xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11, interval: 4 }, axisTick: { show: false } },
-    yAxis: {
-      type: 'log', inverse: true, min: 1,
-      name: 'rank', nameLocation: 'middle', nameGap: 30, nameRotate: 90,
-      nameTextStyle: { fontSize: 11, color: C.muted },
-      axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { color: C.grid } },
-    },
-    series,
-  }, true);
-}
-
 /* ---------------------------------------------------------------- controls */
 function bindUI() {
   el('prevBtn').onclick = () => go(state.page - 1);
@@ -588,19 +536,9 @@ function bindUI() {
     if (e.key === 'ArrowRight') go(state.page + 1);
   });
 
-  el('groupSeg')?.querySelectorAll('button').forEach((b) => {
-    b.onclick = () => {
-      el('groupSeg').querySelectorAll('button').forEach((x) => x.classList.remove('active'));
-      b.classList.add('active');
-      state.groupFilter = b.dataset.g;
-      renderRankChart();
-      window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected, category: state.groupFilter });
-    };
-  });
   el('logToggle').onclick = () => {
     state.logScale = !state.logScale;
     el('logToggle').textContent = 'Log scale: ' + (state.logScale ? 'on' : 'off');
-    renderRankChart();
     renderLinked();
   };
 }

@@ -100,7 +100,7 @@
   }
   function setInert() {
     // Never put inert on the active iframe or any of its ancestors.
-    document.querySelectorAll('.hero,.thesis,.chapter-heading,.chapter-lead,.finding,.chart-grid,.synthesis-points,.method,.credits,footer').forEach(el => { el.inert = !!active; });
+    document.querySelectorAll('.hero,.thesis,.chapter-heading,.chapter-lead,.finding,.chart-grid,.method,.credits,footer').forEach(el => { el.inert = !!active; });
     panels.forEach(panel => { panel.el.inert = !!active && panel !== active; });
   }
   function updateNav() {
