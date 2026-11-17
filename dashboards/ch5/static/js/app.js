@@ -69,6 +69,7 @@ async function boot() {
       getSelection: () => state.selected,
       select: (id) => selectOrg(id, 'external'),
     };
+    window.Ch5Layout?.connect();
     window.addEventListener('resize', () => Object.values(state.charts).forEach((c) => c && c.resize()));
     window.addEventListener('hashchange', () => {
       const s = String(location.hash || '').replace(/^#/, '');
@@ -109,6 +110,7 @@ function go(i) {
     const h = '#' + state.pages[state.page];
     if (location.hash !== h) history.replaceState(null, '', h);
   }
+  window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected, category: state.groupFilter });
   window.scrollTo({ top: 0, behavior: 'smooth' });
   setTimeout(() => Object.values(state.charts).forEach((c) => c && c.resize()), 60);
 }
@@ -127,6 +129,7 @@ function selectOrg(id, source = 'shell') {
   renderOrgCard();
   renderLinked();
   if (state.charts.exceptions) renderExceptions();
+  window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected, category: state.groupFilter });
 }
 
 /* ---------------------------------------------------------------- helper: chart init */
@@ -591,6 +594,7 @@ function bindUI() {
       b.classList.add('active');
       state.groupFilter = b.dataset.g;
       renderRankChart();
+      window.Ch5Layout?.sync({ view: state.pages[state.page], selection: state.selected, category: state.groupFilter });
     };
   });
   el('logToggle').onclick = () => {

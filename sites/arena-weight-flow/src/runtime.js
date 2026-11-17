@@ -1,3 +1,3 @@
-// The standalone site keeps its Storyboard and language controls. The report
-// build is a reproducible, English-only dashboard embed of the same source.
-export const REPORT_EMBED = import.meta.env.MODE === 'report';
+// Keep standalone report builds dashboard-only; native embed UI is query-driven.
+export const EMBED_MODE = new URLSearchParams(location.search).get('embed') === '1';
+export const REPORT_EMBED = import.meta.env.MODE === 'report' || EMBED_MODE;

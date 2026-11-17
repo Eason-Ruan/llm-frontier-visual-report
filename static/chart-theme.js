@@ -1,7 +1,7 @@
 // Shared visual encodings for the narrative figures and chapter dashboards.
 (() => {
   const font =
-    'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    'Inter, sans-serif';
   const colors = Object.freeze({
     ink: "#203b37",
     muted: "#536b65",

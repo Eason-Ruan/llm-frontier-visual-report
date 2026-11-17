@@ -26,13 +26,21 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
   const rulerX = reading ? geo.left + (rulerIndex + .5) * geo.col : null;
   const readouts = reading ? composition.map((band, i) => ({ ...band.series[rulerIndex], band: geo.bands[i] })) : [];
   const height=baseHeight;
+  const [fontsReady, setFontsReady] = useState(!document.fonts);
   useEffect(() => {
+    let active = true;
+    if (document.fonts) document.fonts.ready.then(() => { if (active) setFontsReady(true); });
+    return () => { active = false; };
+  }, []);
+  useEffect(() => {
+    if (!fontsReady) return;
     const observer = new ResizeObserver(([e]) => setWidth(Math.max(compact ? 320 : 760, Math.round(e.contentRect.width))));
     observer.observe(host.current);
     return () => observer.disconnect();
-  }, [compact]);
+  }, [compact, fontsReady]);
   useEffect(() => { setTip(null); setAreaHover(null); }, [periods, mode, stacking, distinguish]);
   useEffect(() => {
+    if (!fontsReady) return;
     const node = canvas.current, ctx = node.getContext('2d');
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     node.width = width * dpr; node.height = height * dpr;
@@ -51,7 +59,7 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
     }));
     const draw = (value, transition) => {
       ctx.clearRect(0, 0, width, height);
-      ctx.font = '11px system-ui, sans-serif';
+      ctx.font = '11px Inter, sans-serif';
       ctx.textBaseline = 'middle'; ctx.textAlign = 'right';
       const { left, y, h, col, slots } = geo;
       const g = gapProgress.current;
@@ -79,7 +87,7 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
           [0, 25, 50, 75, 100].forEach(percent => {
             const yy = y + h * (1 - percent / 100);
             ctx.fillStyle = percent > 0 && percent < 100 ? REFERENCE_COLOR : '#859187';
-            ctx.font = `${percent > 0 && percent < 100 ? '600 ' : ''}11px system-ui,sans-serif`;
+            ctx.font = `${percent > 0 && percent < 100 ? '600 ' : ''}11px Inter,sans-serif`;
             ctx.fillText(`${percent}%`, left - 10, yy);
           });
         } else {
@@ -89,7 +97,7 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
         }
       }
       ctx.globalAlpha = 1;
-      ctx.fillStyle = '#859187'; ctx.textAlign = 'left'; ctx.font = '10px system-ui, sans-serif';
+      ctx.fillStyle = '#859187'; ctx.textAlign = 'left'; ctx.font = '10px Inter, sans-serif';
       ctx.fillText(g > .5 ? t('名次差', 'Rank gap') : value < .5 ? t('序位', 'Position') : stacking === 'all' ? t('模型占比', 'Share') : t('名次分区', 'Bands'), 4, 10);
       ctx.strokeStyle = '#dae3d9'; ctx.beginPath(); ctx.moveTo(left, y + h + 8); ctx.lineTo(width - 18, y + h + 8); ctx.stroke();
       const stride = periods.length > 30 ? 3 : periods.length > 15 ? 2 : 1;
@@ -99,8 +107,8 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
           ctx.textAlign = 'center'; ctx.fillStyle = '#89948b'; ctx.fillText(p.month.slice(5), x, y + h + 25);
         }
         if (i === 0 || p.month.slice(0, 4) !== periods[i - 1].month.slice(0, 4)) {
-          ctx.textAlign = 'left'; ctx.fillStyle = '#536c5b'; ctx.font = '600 12px system-ui, sans-serif';
-          ctx.fillText(p.month.slice(0, 4), left + i * col, y + h + 50); ctx.font = '10px system-ui, sans-serif';
+          ctx.textAlign = 'left'; ctx.fillStyle = '#536c5b'; ctx.font = '600 12px Inter, sans-serif';
+          ctx.fillText(p.month.slice(0, 4), left + i * col, y + h + 50); ctx.font = '10px Inter, sans-serif';
         }
       });
       ctx.globalAlpha=1-g*.88;
@@ -164,7 +172,7 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
           ctx.lineWidth=stacking==='tiers'?2.8:percent===50?4:3.5;ctx.strokeStyle='#ffffffe0';ctx.stroke();
           ctx.lineWidth=stacking==='tiers'?1.6:percent===50?2.6:2;ctx.strokeStyle=REFERENCE_COLOR;ctx.stroke();
           if(stacking!=='all'){
-            ctx.setLineDash([]);ctx.font=`${percent===50?'600 ':''}8px system-ui,sans-serif`;ctx.textAlign='left';ctx.textBaseline='middle';
+            ctx.setLineDash([]);ctx.font=`${percent===50?'600 ':''}8px Inter,sans-serif`;ctx.textAlign='left';ctx.textBaseline='middle';
             ctx.lineWidth=3;ctx.strokeStyle='#fffffff0';ctx.strokeText(`${percent}%`,left+3,yy);
             ctx.fillStyle=REFERENCE_COLOR;ctx.fillText(`${percent}%`,left+3,yy);
           }
@@ -177,13 +185,13 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
         ctx.fillStyle='#a28c4f0d';ctx.fillRect(left,y,cutoff*col,h);
         ctx.strokeStyle='#a28c4f99';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(left+cutoff*col,y);ctx.lineTo(left+cutoff*col,y+h);ctx.stroke();ctx.setLineDash([]);
         const caveat=t(compact?(cutoff*col<70?'早期数据':'早期覆盖不足'):'早期闭源覆盖不完整',compact?(cutoff*col<70?'Early data':'Limited coverage'):'Limited early coverage');
-        ctx.fillStyle='#8e835d';ctx.font='9px system-ui,sans-serif';ctx.textAlign='left';ctx.fillText(caveat,left+4,y-12,Math.max(25,cutoff*col-8));ctx.fillText(compact?'23.12':'2023.12',left+cutoff*col+4,y-12);
+        ctx.fillStyle='#8e835d';ctx.font='9px Inter,sans-serif';ctx.textAlign='left';ctx.fillText(caveat,left+4,y-12,Math.max(25,cutoff*col-8));ctx.fillText(compact?'23.12':'2023.12',left+cutoff*col+4,y-12);
       }
       if(top===10 && value<1){
         ctx.globalAlpha=1-value;
-        if(g<1 && slots>10){ctx.strokeStyle='#a5afa3';ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(left,y+10*h/slots);ctx.lineTo(width-18,y+10*h/slots);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#86917f';ctx.font='9px system-ui,sans-serif';ctx.fillText(t('Top 10 外 · 前沿仍按真实名次显示','Beyond Top 10 · Actual frontier ranks'),left+5,y+10*h/slots+12);}
+        if(g<1 && slots>10){ctx.strokeStyle='#a5afa3';ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(left,y+10*h/slots);ctx.lineTo(width-18,y+10*h/slots);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#86917f';ctx.font='9px Inter,sans-serif';ctx.fillText(t('Top 10 外 · 前沿仍按真实名次显示','Beyond Top 10 · Actual frontier ranks'),left+5,y+10*h/slots+12);}
         if(g>0){
-          ctx.globalAlpha=(1-value)*g;ctx.font='10px system-ui,sans-serif';ctx.textAlign='right';
+          ctx.globalAlpha=(1-value)*g;ctx.font='10px Inter,sans-serif';ctx.textAlign='right';
           [-extent,-Math.ceil(extent/2),0,Math.ceil(extent/2),extent].filter((v,i,a)=>a.indexOf(v)===i).forEach(v=>{ctx.fillStyle='#758174';ctx.fillText(v>0?`+${v}`:String(v),left-10,gapY(v));});
           ctx.strokeStyle='#59666d';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,zero);ctx.lineTo(width-18,zero);ctx.stroke();
           ctx.textAlign=compact?'left':'right';ctx.fillStyle='#a85e65';ctx.fillText(t('闭权重领先 ＋','Closed-weight leads ＋'),compact?left+5:width-22,y+12);ctx.fillStyle='#26846c';ctx.fillText(t('开权重领先 −','Open-weight leads −'),compact?left+5:width-22,y+h-12);
@@ -235,7 +243,7 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
           const anchorY=(p.openY+p.closedY)/2;
           ctx.globalAlpha=1-value;ctx.strokeStyle=p.gap>=0?'#8b4958':'#176952';ctx.lineWidth=1.2;
           ctx.beginPath();ctx.moveTo(p.x,p.closedY);ctx.lineTo(p.x,p.openY);ctx.moveTo(p.x-3,p.closedY);ctx.lineTo(p.x+3,p.closedY);ctx.moveTo(p.x-3,p.openY);ctx.lineTo(p.x+3,p.openY);ctx.stroke();
-          const valueRect=showText(`${compact?'':'Gap '}${p.gap>0?'+':''}${p.gap}${peak.endpoint?'*':''}`,p.x,anchorY,`600 ${compact?10:11}px system-ui,sans-serif`,'#394d6d');
+          const valueRect=showText(`${compact?'':'Gap '}${p.gap>0?'+':''}${p.gap}${peak.endpoint?'*':''}`,p.x,anchorY,`600 ${compact?10:11}px Inter,sans-serif`,'#394d6d');
           peakHits.current.push({...valueRect,peak});
           const prevX=i?points[peaks[i-1].index].x:left-150, nextX=i+1<peaks.length?points[peaks[i+1].index].x:width+150;
           const available=Math.max(44,Math.min(128,p.x-prevX-5,nextX-p.x-5));
@@ -247,10 +255,10 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
             const name=shortModelName(names[0])+(names.length>1?` +${names.length-1}`:'');
             const upper=kind==='open'?p.openY<=p.closedY:p.closedY<p.openY;
             const yy=upper?Math.max(18,Math.min(p.openY,p.closedY)-12):Math.min(y+h+4,Math.max(p.openY,p.closedY)+13);
-            showText(name,p.x,yy,'9.5px system-ui,sans-serif',kind==='open'?'#075b43':'#873d4a',available);
+            showText(name,p.x,yy,'9.5px Inter,sans-serif',kind==='open'?'#075b43':'#873d4a',available);
           }
         });
-        const focus=points[selected];if(focus && focus.gap!==null && !peaks.some(p=>p.index===selected)){ctx.strokeStyle='#6c7693';ctx.lineWidth=1;ctx.setLineDash([2,2]);ctx.beginPath();ctx.moveTo(focus.x,focus.openY);ctx.lineTo(focus.x,focus.closedY);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#4e5f7a';ctx.font='600 10px system-ui,sans-serif';ctx.textAlign=focus.x>width-90?'right':'left';ctx.fillText(`Gap ${focus.gap>0?'+':''}${focus.gap}`,focus.x+(focus.x>width-90?-7:7),(focus.openY+focus.closedY)/2);}
+        const focus=points[selected];if(focus && focus.gap!==null && !peaks.some(p=>p.index===selected)){ctx.strokeStyle='#6c7693';ctx.lineWidth=1;ctx.setLineDash([2,2]);ctx.beginPath();ctx.moveTo(focus.x,focus.openY);ctx.lineTo(focus.x,focus.closedY);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#4e5f7a';ctx.font='600 10px Inter,sans-serif';ctx.textAlign=focus.x>width-90?'right':'left';ctx.fillText(`Gap ${focus.gap>0?'+':''}${focus.gap}`,focus.x+(focus.x>width-90?-7:7),(focus.openY+focus.closedY)/2);}
         ctx.globalAlpha=1;
       }else{frontierHits.current=[];peakHits.current=[];}
       if(stacking==='all' && value>.995 && (!morph || transition>.995) && !reading){
@@ -278,7 +286,7 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
               const centre=(regionTop+regionBottom)/2;lower=upper;
               if(kind==='unknown' && share===0)continue;
               const text=`${shareLabel(share)}${event.endpoint?'*':''}`;
-              ctx.font=`600 ${compact?9:10}px system-ui,sans-serif`;
+              ctx.font=`600 ${compact?9:10}px Inter,sans-serif`;
               const tw=ctx.measureText(text).width,hh=compact?10:11;
               let xx=Math.max(left+tw/2+2,Math.min(width-20-tw/2,x));
               if(regionBottom-regionTop<24)xx=Math.max(left+tw/2+2,Math.min(width-20-tw/2,x+(x>width-80?-1:1)*(8+tw/2)));
@@ -331,7 +339,7 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
       if (fraction === 1) animation.stop();
     });
     return () => animation.stop();
-  }, [geo, mode, stacking, colors, width, height, top, periods, selected, peaks, baseHeight, compact, composition, reading, rulerIndex, language, t]);
+  }, [geo, mode, stacking, colors, width, height, top, periods, selected, peaks, baseHeight, compact, composition, reading, rulerIndex, language, t, fontsReady]);
   const pointer = e => {
     const r = canvas.current.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
     const monthIndex=Math.floor((x-geo.left)/geo.col);

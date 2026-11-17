@@ -196,10 +196,10 @@ function renderScale() {
     return;
   }
   o.title = [
-    labelTitle("Market cap · USD bn", "2%", 4),
-    labelTitle("Revenue · USD bn", "55%", 4),
-    labelTitle("Market cap share", "2%", "53%"),
-    labelTitle("Revenue share", "55%", "53%"),
+    labelTitle("a. Market cap · USD bn", "2%", 4),
+    labelTitle("b. Revenue · USD bn", "55%", 4),
+    labelTitle("c. Market cap share", "2%", "53%"),
+    labelTitle("d. Revenue share", "55%", "53%"),
   ];
   o.grid = [
     { left: 46, right: "54%", top: 32, height: "40%", containLabel: false },
@@ -613,6 +613,7 @@ function syncControls() {
     .forEach((input) => (input.checked = input.value === state.labScale));
   $("selection-summary").textContent =
     `${state.group === "All" ? "All groups" : state.group} · ${state.organizations.length} orgs · ${state.years[0]}–${state.years[1]}`;
+  window.Chapter2UI?.sync(state, data);
 }
 function render() {
   views = viewData(data, state);

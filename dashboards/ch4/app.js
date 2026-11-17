@@ -279,6 +279,7 @@ function bindTimeline(entry) {
       !entry.dates.length
     )
       return;
+    if (e.key === "Escape" && !state.focus) return;
     e.preventDefault();
     if (e.key === "Escape") {
       state.focus = null;
@@ -287,6 +288,7 @@ function bindTimeline(entry) {
       highlight();
       entry.chart.dispatchAction({ type: "hideTip" });
       announce("Date focus cleared");
+      window.Ch4Layout?.sync(state);
       return;
     }
     if (e.key === "Enter") {
@@ -825,6 +827,7 @@ function chooseCountry(code) {
   renderTalent();
   renderKpis();
   renderFocus();
+  window.Ch4Layout?.sync(state);
   highlight();
   announce("Selected " + names[code]);
 }
@@ -1073,6 +1076,7 @@ function setFocus(date) {
   renderFocus();
   renderCountries();
   highlight();
+  window.Ch4Layout?.sync(state);
 }
 function render() {
   renderKpis();
@@ -1083,6 +1087,7 @@ function render() {
   renderAdoption();
   renderFocus();
   highlight();
+  window.Ch4Layout?.sync(state);
 }
 function setRange(a, b) {
   if (!a || !b || a > b) {
@@ -1306,6 +1311,7 @@ function boot() {
     renderFocus();
     renderCountries();
     highlight();
+    window.Ch4Layout?.sync(state);
   });
   $("events-list").addEventListener("click", (e) => {
     const b = e.target.closest("[data-event]");
@@ -1326,13 +1332,9 @@ function boot() {
     $("model-search").value = "";
     setRange("2024-01-01", "2025-12-31");
   });
-  $("fullscreen").addEventListener("click", async () => {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await document.documentElement.requestFullscreen();
-    } catch {
-      toast("Use F11 for fullscreen");
-    }
+  $("fullscreen").addEventListener("click", () => {
+    if (window.parent === window) location.assign('/explore/ch4/');
+    else window.ReportEmbed?.requestFullscreen();
   });
   $("export").addEventListener("click", exportSelection);
   document.querySelectorAll("[data-tab]").forEach((b) =>
@@ -1360,5 +1362,7 @@ function boot() {
     resizeTimer = setTimeout(render, 180);
   });
   render();
+  window.DSH_CH4 = { setRange, setFocus, chooseCountry, getState: () => ({ ...state, selected: [...state.selected] }) };
+  window.Ch4Layout?.connect();
 }
 boot();

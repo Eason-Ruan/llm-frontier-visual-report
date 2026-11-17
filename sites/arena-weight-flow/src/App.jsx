@@ -5,7 +5,8 @@ import Storyboard from './Storyboard.jsx';
 import { KINDS, STACK_LABELS, palette, stackRanges, counts, selectPeriods, calendarPeriods, frontierPoints } from './flow.js';
 import { useLanguage, accessLabel, stackLabel, categoryLabel, groupLabel, sourceText } from './i18n.jsx';
 import { assetUrl } from './assets.js';
-import { REPORT_EMBED } from './runtime.js';
+import { EMBED_MODE, REPORT_EMBED } from './runtime.js';
+import './report-embed.css';
 
 function Segments({ label, values, value, onChange }) {
   return <div className="segments" role="group" aria-label={label}>{values.map(v => <button key={v.id} aria-pressed={value === v.id} onClick={() => onChange(v.id)}>{v.icon}{v.label}</button>)}</div>;
@@ -28,6 +29,7 @@ export default function App() {
   const [catalog, setCatalog] = useState(null), [data, setData] = useState(null);
   const [category, setCategory] = useState(new URLSearchParams(location.search).get('category') || 'overall');
   const [top, setTop] = useState(50), [mode, setMode] = useState('rank'), [selected, setSelected] = useState(0);
+  const [notesOpen, setNotesOpen] = useState(false);
   const [stacking, setStacking] = useState('all'), [distinguish, setDistinguish] = useState(false);
   const effectiveStacking = top === 10 ? 'all' : stacking;
   const colors = useMemo(() => palette(distinguish), [distinguish]);
@@ -50,15 +52,33 @@ export default function App() {
   }, [catalog, category, retry]);
   useEffect(() => { const pop = () => { const params = new URLSearchParams(location.search); setPage(REPORT_EMBED || params.get('view') === 'dashboard' ? 'dashboard' : 'story'); const c = params.get('category') || 'overall'; const next = catalog?.categories.some(x => x.id === c) ? c : 'overall'; if (next !== category) { setData(null); setCategory(next); } }; window.addEventListener('popstate', pop); return () => window.removeEventListener('popstate', pop); }, [catalog, category]);
   const changePage = next => { if (REPORT_EMBED || next === page) return; setPage(next); const url = new URL(location.href); url.hash = ''; url.searchParams.set('view', next); history.pushState({}, '', url); window.scrollTo({ top: 0, behavior: 'instant' }); };
-  const changeCategory = c => { if (c === category) return; setData(null); setCategory(c); const url = new URL(location.href); url.searchParams.set('category', c); history.pushState({}, '', url); };
+  const changeCategory = c => { if (c === category) return; setData(null); setCategory(c); const url = new URL(location.href); url.searchParams.set('category', c); history[EMBED_MODE ? 'replaceState' : 'pushState']({}, '', url); };
   const periods = useMemo(() => data ? selectPeriods(calendarPeriods(data.periods, '2023-05', catalog.categories.map(c => c.end.slice(0, 7)).sort().at(-1)), top) : [], [data, top, catalog]);
   const front = frontierPoints(periods)[selected];
   const current = periods[selected], totals = counts(current?.models || []);
   const categoryItem = catalog?.categories.find(c => c.id === category);
   const label = categoryItem ? categoryLabel(categoryItem, language) : t('综合榜单', 'Overall');
   const open = totals.apacheMit + totals.otherOpen;
+  useEffect(() => {
+    if (!EMBED_MODE) return;
+    window.ReportEmbed?.ready({ title: 'From leaderboard ranks to open-weight share', help: 'Explore Top 10 / Top 50 ranks, composition and frontier gaps. Select a month for the original snapshot and model table.' });
+    window.ReportEmbed?.setView({ view: mode, selection: current?.month || null, category });
+    window.ReportEmbed?.notify();
+  }, [mode, category, current?.month, top, stacking, distinguish, notesOpen]);
+  useEffect(() => {
+    if (!EMBED_MODE || !catalog) return;
+    return window.ReportEmbed?.onAction(action => {
+      if (action.type === 'category' && catalog.categories.some(item => item.id === action.category)) changeCategory(action.category);
+      if (action.type === 'help') { setNotesOpen(true); document.getElementById('embed-chart-notes')?.scrollIntoView({ block: 'nearest' }); }
+    });
+  }, [catalog, category]);
   const errorMessage = error === 'catalog' ? t('榜单目录暂时无法加载', 'The leaderboard catalog could not be loaded.') : t('榜单数据暂时无法加载', 'The leaderboard data could not be loaded.');
   const tierLabels = stackRanges(top, effectiveStacking).map(b => b.label).join(t('、', ', '));
+  const chartLegend = <div className="legend">
+              {(distinguish ? KINDS : ['otherOpen', 'closed', 'unknown']).map(k => <span key={k}><i style={{ background: colors[k] }} />{!distinguish && k === 'otherOpen' ? t('开权重', 'Open-weight') : accessLabel(k, language)}</span>)}
+              {mode === 'rank' && <span><i className="tie-swatch" />{t('并列排名', 'Tied ranks')}</span>}<span><i className="missing-swatch" />{t('无榜单快照', 'No snapshot')}</span>
+            {top === 10 && mode !== 'area' && <><span><i className="gap-hatch-swatch" />{t('前沿差距 · 斜线', 'Frontier gap · hatching')}</span><span><i className="front-open" style={{ background: mode === 'gap' ? '#5867a3' : '#26846c' }} />{mode === 'gap' ? t('名次差曲线', 'Rank-gap curve') : t('最强开权重', 'Best open-weight')}</span><span><i className="front-closed" style={{ background: mode === 'gap' ? '#77828a' : '#bd6250' }} />{mode === 'gap' ? t('最强闭权重（零基准）', 'Best closed-weight (zero baseline)') : t('最强闭权重', 'Best closed-weight')}</span></>}
+            </div>;
 
   return <>
     <a className="skip" href={page === 'story' ? '#story-frontier' : '#chart'}>{t('跳至图表', 'Skip to chart')}</a>
@@ -71,7 +91,7 @@ export default function App() {
       </nav>
       <div className="sidebar-bottom"><span className="status-dot" /> ARENA TEXT<p>2023.05 — 2026.09<br />{t('每月一张榜单，两个观察角度。', 'One snapshot each month. Two perspectives.')}</p><a href="#method">{t('数据与统计口径', 'Data & methodology')} <ArrowUpRight size={12} /></a></div>
     </aside>
-    <div className={`main-shell${sidebarCollapsed ? ' sidebar-collapsed' : ''}${REPORT_EMBED ? ' report-embedded' : ''}`}>
+    <div className={`main-shell${sidebarCollapsed ? ' sidebar-collapsed' : ''}${REPORT_EMBED ? ' report-embedded' : ''}${EMBED_MODE ? ' native-embed' : ''}`}>
       <header className="topbar">
         <div className="topbar-start"><button className="sidebar-toggle" aria-controls="site-sidebar" aria-expanded={!sidebarCollapsed} aria-label={sidebarCollapsed ? t('展开侧栏', 'Expand sidebar') : t('收起侧栏', 'Collapse sidebar')} title={sidebarCollapsed ? t('展开侧栏', 'Expand sidebar') : t('收起侧栏', 'Collapse sidebar')} onClick={() => setSidebarCollapsed(value => !value)}>{sidebarCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}</button><span>Arena Fieldnotes <b>/</b> {page === 'story' ? t('故事板', 'Storyboard') : t('权重与许可', 'Weight Access & Licenses')}</span></div>
         <div className="topbar-tools"><span className="edition">{page === 'story' ? t('两个关联故事', 'TWO LINKED STORIES') : t('探索 01', 'EXPLORATION 01')}</span><div className="language-switch" role="group" aria-label={t('页面语言', 'Site language')}><button lang="en" aria-label={t('切换为英语', 'Switch to English')} aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>EN</button><button lang="zh" aria-label={t('切换为中文', 'Switch to Chinese')} aria-pressed={language === 'zh'} onClick={() => setLanguage('zh')}>中文</button></div></div>
@@ -79,13 +99,28 @@ export default function App() {
       <main>
         {page === 'story' ? (error && !catalog ? <div className="load-state" role="alert"><p>{errorMessage}</p><button onClick={() => setRetry(r => r + 1)}>{t('重新加载', 'Try again')}</button></div> : <Storyboard catalog={catalog} onDashboard={() => changePage('dashboard')} />) : <>
           <section className="hero"><div><span className="eyebrow"><i /> {t('模型权重开放程度的时间变化', 'MODEL ACCESS OVER TIME')}</span><h1>{t('格局之变', 'The Flip')}<span>.</span></h1><h2>{t('权重与许可组成', 'Weight Access & License Composition')}</h2><p>{t('一个方块，一个模型。先看它排在哪里，再看它属于哪一边。', 'One block, one model. See where it ranks, then which group it belongs to.')}</p></div><div className="hero-symbol" aria-hidden="true"><div className="mini-grid">{Array.from({ length: 25 }, (_, i) => <i key={i} style={{ background: i % 5 < 3 ? (i % 5 < 2 ? colors.apacheMit : colors.otherOpen) : colors.closed, opacity: .45 + (i % 5) * .1 }} />)}</div><ArrowDown size={19} /><span>{t('排名 → 组成', 'RANK → COMPOSITION')}</span></div></section>
-          <section className="figure" id="chart" aria-labelledby="chart-title">
-            <div className="figure-heading"><div><span className="eyebrow">{t('01 / 权重与许可', '01 / WEIGHTS & LICENSES')}</span><h2 id="chart-title">{t('从榜单排位，到开放占比', 'From leaderboard ranks to open-weight share')}</h2></div><label className="category-label">{t('Arena Text 子榜单', 'Arena Text category')}<select value={category} onChange={e => changeCategory(e.target.value)} disabled={!catalog} aria-label={t('Arena Text 子榜单', 'Arena Text category')}>{[...new Set(catalog?.categories.map(c => c.group) || [])].map(group => <optgroup key={group} label={groupLabel(group, language)}>{catalog.categories.filter(c => c.group === group).map(c => <option key={c.id} value={c.id}>{categoryLabel(c, language)}</option>)}</optgroup>)}</select></label></div>
+          <div className={EMBED_MODE ? 'ch1-dashboard-layout' : undefined}>
+            {EMBED_MODE && <aside className="dashboard-filters" aria-label="Chart filters and insight">
+              <section className="dashboard-insight"><h2>Insight</h2><p>{mode === 'area' ? `Compare how the balance of open- and closed-weight models changes across the Top ${top}. Each monthly snapshot uses the model count actually recorded for that month.` : mode === 'gap' ? 'Rank gap = best open-weight rank − best closed-weight rank. Positive values mean closed-weight leads; negative values mean open-weight leads. The gap measures ordering, not a capability difference.' : 'One block, one model. See where it ranks, then which group it belongs to. Gray outlines mark tied groups; hover for the original rank.'}</p></section>
+              <section className="dashboard-filter-card">
+                <label>Category<select value={category} onChange={e => changeCategory(e.target.value)} disabled={!catalog} aria-label="Arena Text category">{[...new Set(catalog?.categories.map(c => c.group) || [])].map(group => <optgroup key={group} label={groupLabel(group, language)}>{catalog.categories.filter(c => c.group === group).map(c => <option key={c.id} value={c.id}>{categoryLabel(c, language)}</option>)}</optgroup>)}</select></label>
+                <label>Leaderboard range<select aria-label="Leaderboard range" value={top} onChange={e => { const next = Number(e.target.value); setTop(next); if (next !== 10 && mode === 'gap') setMode('rank'); }}><option value={10}>Top 10</option><option value={50}>Top 50</option></select></label>
+                <label>Chart view<select aria-label="Chart view" value={mode} onChange={e => { setMode(e.target.value); if (e.target.value === 'gap') setTop(10); }}><option value="rank">Rank blocks</option><option value="area">Composition</option><option value="gap">Frontier gap</option></select></label>
+                {top === 50 && <label>Stacking<select aria-label="Stacking" value={stacking} onChange={e => { setStacking(e.target.value); setMode('area'); }}>{Object.keys(STACK_LABELS).map(id => <option key={id} value={id}>{stackLabel(id, language)}</option>)}</select></label>}
+                <label className="dashboard-license"><input type="checkbox" checked={distinguish} onChange={e => setDistinguish(e.target.checked)} />Apache / MIT detail</label>
+                <button className="dashboard-clear" onClick={() => { changeCategory(catalog?.defaultCategory || 'overall'); setTop(50); setMode('rank'); setStacking('all'); setDistinguish(false); }}>Clear all filters</button>
+              </section>
+            </aside>}
+          <section className="figure" id="chart" aria-labelledby={EMBED_MODE ? 'embed-chart-title' : 'chart-title'}>
+            {EMBED_MODE && <header className="dashboard-chart-heading"><h2 id="embed-chart-title">1.1 · Top {top} {mode === 'area' ? 'composition' : mode === 'gap' ? 'frontier gap' : 'rank blocks'}</h2><button type="button" className="dashboard-info-button" aria-label="Chart notes and data limitations" aria-describedby="embed-chart-notes" onClick={() => setNotesOpen(value => !value)} aria-expanded={notesOpen}><img src={assetUrl('ui/information.svg')} width="16.6" height="16.6" alt="" /></button></header>}
+            <div className={EMBED_MODE ? `dashboard-chart-notes${notesOpen ? ' is-open' : ''}` : undefined} id={EMBED_MODE ? 'embed-chart-notes' : undefined}>
+            {!EMBED_MODE && <><div className="figure-heading"><div><span className="eyebrow">{t('01 / 权重与许可', '01 / WEIGHTS & LICENSES')}</span><h2 id="chart-title">{t('从榜单排位，到开放占比', 'From leaderboard ranks to open-weight share')}</h2></div><label className="category-label">{t('Arena Text 子榜单', 'Arena Text category')}<select value={category} onChange={e => changeCategory(e.target.value)} disabled={!catalog} aria-label={t('Arena Text 子榜单', 'Arena Text category')}>{[...new Set(catalog?.categories.map(c => c.group) || [])].map(group => <optgroup key={group} label={groupLabel(group, language)}>{catalog.categories.filter(c => c.group === group).map(c => <option key={c.id} value={c.id}>{categoryLabel(c, language)}</option>)}</optgroup>)}</select></label></div>
             <div className="controls">
               <Segments label={t('榜单范围', 'Leaderboard range')} value={top} onChange={n => { setTop(n); if (n !== 10 && mode === 'gap') setMode('rank'); }} values={[{ id: 10, label: t('前 10 名', 'Top 10') }, { id: 50, label: t('前 50 名', 'Top 50') }]} />
               <div className="mode-control"><span>{t('观察方式', 'View')}</span><Segments label={t('观察方式', 'Chart view')} value={mode} onChange={m => { setMode(m); if (m === 'gap') setTop(10); }} values={[{ id: 'rank', label: t('排名方块', 'Rank blocks'), icon: <Grid2X2 size={14} /> }, { id: 'area', label: t('面积组成', 'Composition'), icon: <Layers3 size={14} /> }, { id: 'gap', label: t('前沿差距', 'Frontier gap'), icon: <ArrowDown size={14} /> }]} /></div>
             </div>
             <div className="stack-controls">{top === 50 && <label>{t('堆叠方式', 'Stacking')}<select aria-label={t('堆叠方式', 'Stacking')} value={stacking} onChange={e => { setStacking(e.target.value); setMode('area'); }}>{Object.keys(STACK_LABELS).map(id => <option key={id} value={id}>{stackLabel(id, language)}</option>)}</select></label>}<label className="license-toggle"><input type="checkbox" checked={distinguish} onChange={e => setDistinguish(e.target.checked)} /><span className="toggle-track" aria-hidden="true" /><span>{t('Apache / MIT 显示深绿', 'Show Apache / MIT in dark green')}</span></label></div>
+            </>}
             <div className="chart-caption" aria-live="polite"><strong>{label} · {t(`前 ${top} 名`, `Top ${top}`)}</strong><span>{mode === 'gap'
               ? t('名次差 = 最强开权重名次 − 最强闭权重名次；正值闭权重领先，负值开权重领先。背景为淡化的前 10 名排名色块。', 'Rank gap = best open-weight rank − best closed-weight rank. Positive: closed-weight leads; negative: open-weight leads. Faded Top 10 rank blocks form the backdrop.')
               : mode === 'rank'
@@ -93,17 +128,15 @@ export default function App() {
                 : effectiveStacking === 'all'
                   ? t('方块按许可归类并堆积，每个月的面积合计为 100%。', 'Blocks are grouped and stacked by license; each month totals 100%.')
                   : t(`第 ${tierLabels} 名分别堆叠；每区内按实际模型数归一化，无模型的分区留空。`, `Ranks ${tierLabels} are stacked separately. Each tier is normalized by its actual model count; empty tiers remain blank.`)}</span></div>
-            <div className="legend">
-              {(distinguish ? KINDS : ['otherOpen', 'closed', 'unknown']).map(k => <span key={k}><i style={{ background: colors[k] }} />{!distinguish && k === 'otherOpen' ? t('开权重', 'Open-weight') : accessLabel(k, language)}</span>)}
-              {mode === 'rank' && <span><i className="tie-swatch" />{t('并列排名', 'Tied ranks')}</span>}<span><i className="missing-swatch" />{t('无榜单快照', 'No snapshot')}</span>
-              {top === 10 && mode !== 'area' && <><span><i className="gap-hatch-swatch" />{t('前沿差距 · 斜线', 'Frontier gap · hatching')}</span><span><i className="front-open" style={{ background: mode === 'gap' ? '#5867a3' : '#26846c' }} />{mode === 'gap' ? t('名次差曲线', 'Rank-gap curve') : t('最强开权重', 'Best open-weight')}</span><span><i className="front-closed" style={{ background: mode === 'gap' ? '#77828a' : '#bd6250' }} />{mode === 'gap' ? t('最强闭权重（零基准）', 'Best closed-weight (zero baseline)') : t('最强闭权重', 'Best closed-weight')}</span></>}
-            </div>
+            {!EMBED_MODE && chartLegend}
             {top === 10 && mode !== 'area' && <p className="peak-note">{t('尖峰处直接显示差距和两侧模型短名；悬浮差距查看完整信息。连续峰顶合并，* 表示末端高点待确认，+N 表示另有模型。', 'Peaks show the gap and abbreviated names from both groups; hover over the gap for details. Flat peaks are merged. * marks an unconfirmed endpoint high; +N indicates additional models.')}</p>}
             {mode === 'area' && <p className="peak-note">{effectiveStacking === 'all'
               ? t('灰色参考线：25% / 50% / 75%。任意连续六个月最多标一个峰、一个谷；* 为末端待确认。悬浮取值线显示当月百分比，红绿交界箭头分别指向对应区域；未知值另记。', 'Gray guides mark 25% / 50% / 75%. Each rolling six-month window has at most one peak and one trough label; * marks an unconfirmed endpoint. Hover guides show monthly percentages. Arrows at the red–green boundary point into each group; unknown values are listed separately.')
               : t('灰色参考线：每区 50%。三区不显示静态峰谷标注。悬浮取值线显示当月百分比，红绿交界箭头分别指向对应区域；未知值另记。', 'Gray guides mark 50% within each tier. Three-tier stacks omit static peak and trough labels. Hover guides show monthly percentages. Arrows at the red–green boundary point into each group; unknown values are listed separately.')}</p>}
             <p className="history-note">{t('2023 年 12 月前：本数据集闭权重模型覆盖不完整，不能据此推断未参评。', 'Before December 2023, this dataset has incomplete closed-weight coverage; absence does not imply non-participation.')} <a href="https://www.lmsys.org/blog/2023-05-10-leaderboard/" target="_blank" rel="noreferrer">{t('官方 2023 年 5 月记录 ↗', 'Official May 2023 record ↗')}</a></p>
+            </div>
             {error ? <div className="load-state" role="alert"><p>{errorMessage}</p><button onClick={() => setRetry(r => r + 1)}>{t('重新加载', 'Try again')}</button></div> : !data ? <div className="load-state" role="status">{t('正在读取榜单…', 'Loading leaderboard…')}</div> : <FlowChart key={category} periods={periods} top={top} mode={mode} stacking={effectiveStacking} distinguish={distinguish} selected={selected} onSelect={setSelected} />}
+            {EMBED_MODE && chartLegend}
             <div className="chart-footer"><span><ArrowDown size={12} /> {t('点击月份查看明细 · 窄屏可横向滚动', 'Select a month for details · Scroll horizontally on narrow screens')}</span><span>{periods.length ? t(`${periods[0].month} — ${periods.at(-1).month} · ${periods.length} 个月`, `${periods[0].month} — ${periods.at(-1).month} · ${periods.length} months`) : ''}</span></div>
             {current && <div className="monthly">
               <div className="monthly-head"><label>{t('月份明细', 'Monthly details')}<select aria-label={t('月份明细', 'Monthly details')} value={selected} onChange={e => setSelected(Number(e.target.value))}>{periods.map((p, i) => <option key={p.month} value={i}>{p.month}{p.observed === false ? t(' · 无数据', ' · No data') : ''}</option>)}</select></label><span>{current.observed === false ? t('该月无榜单快照', 'No snapshot for this month') : t(`实际快照 ${current.date}`, `Snapshot: ${current.date}`)}</span></div>
@@ -114,6 +147,7 @@ export default function App() {
               </>}
             </div>}
           </section>
+          </div>
         </>}
         <details id="method" className="method"><summary><Database size={15} /> {t('数据与统计口径', 'Data & methodology')}</summary><div>
           <p>{t('沿用原站的 Arena Text 历史快照及权重／许可分类。每月使用该子榜最后一张可用快照，保留原始 rank ≤ 10 / 50 的全部模型，包括并列名次。排名图中每个模型按顺序各占一个等大的完整色块，并列组以灰框标注；纵轴为展示序位，原始名次保留在悬浮提示和明细表。边界并列可能使模型数超过阈值，完整保留并向下延展；早期不足额的月份按实际模型数计算占比。', 'This view uses the original site’s Arena Text historical snapshots and weight-access / license classifications. Each month uses the category’s last available snapshot and includes every model with an original rank ≤ 10 / 50, including ties. In rank view, each model occupies one equal-sized block in order; gray outlines mark tied groups. The vertical axis shows display position, while tooltips and the details table retain original ranks. Boundary ties can push the model count above the cutoff; all are retained and the chart extends downward. Shares in early months with fewer models use the actual model count.')}</p>

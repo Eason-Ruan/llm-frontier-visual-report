@@ -1,0 +1,19 @@
+/* Shared chapter vocabulary; presentation applies only in the report iframe. */
+html[data-report-embed="true"] { height: auto; min-height: 0; background: var(--report-paper); }
+html[data-report-embed="true"] body { margin: 0; min-height: 0; height: auto; background: var(--report-paper); color: var(--report-ink); font-family: var(--report-font); }
+html[data-report-embed="true"] *, html[data-report-embed="true"] *::before, html[data-report-embed="true"] *::after { box-sizing: border-box; }
+html[data-report-embed="true"] .dashboard-layout { display: grid; grid-template-columns: 224px minmax(0,1fr); gap: var(--report-space-lg); padding: var(--report-space-lg); align-items: start; }
+html[data-report-embed="true"] .dashboard-sidebar { display: grid; gap: var(--report-space-lg); min-width: 0; }
+html[data-report-embed="true"] :is(.insight-card,.filter-card,.chart-card,.data-summary) { background: var(--report-surface); border: 1px solid var(--report-border); border-radius: var(--report-radius-lg); padding: var(--report-space-lg); min-width: 0; }
+html[data-report-embed="true"] .insight-card { background: var(--report-surface); }
+html[data-report-embed="true"] .chart-info { color: var(--report-muted); font-size: var(--report-text-small); line-height: var(--report-leading-small); }
+.report-help-dialog { width: min(540px,calc(100% - 32px)); color: var(--report-ink); background: var(--report-surface); border: 1px solid var(--report-border); border-radius: var(--report-radius-xl); padding: var(--report-space-xl); font: var(--report-text-body)/1.7 var(--report-font); }
+.report-help-dialog::backdrop { background: #173c3966; }
+.report-help-dialog h2 { padding-right: 24px; font-size: var(--report-text-heading); line-height: var(--report-leading-heading); margin: 0 0 12px; }
+.report-help-dialog p { white-space: pre-line; margin: 0 0 12px; }
+.report-help-dialog small { color: var(--report-muted); }
+.report-help-close { float: right; border: 1px solid var(--report-border); background: white; color: var(--report-ink); border-radius: var(--report-radius-sm); font: inherit; cursor: pointer; }
+@media(max-width:760px) { html[data-report-embed="true"] .dashboard-layout { grid-template-columns: minmax(0,1fr); padding: var(--report-space-md); } }
+
+html[data-report-embed="true"] .insight-card :is(h2,h3) { font-size:var(--report-text-heading); line-height:var(--report-leading-heading); }
+html[data-report-embed="true"] .insight-card p { font-size:var(--report-text-insight); line-height:var(--report-leading-insight); }

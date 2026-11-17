@@ -13,7 +13,7 @@ await mkdir(target, { recursive: true });
 // Only assets are disposable. Keep any non-generated additions in the target.
 await rm(join(target, 'assets'), { recursive: true, force: true });
 await cp(source, target, { recursive: true, force: true });
-await writeFile(join(target, 'index.html'), entry.replace('</body>', '<script src="/static/bridge.js"></script></body>'));
+await writeFile(join(target, 'index.html'), entry.replace('</head>', '<link rel="stylesheet" href="/static/chart-theme.css"><link rel="stylesheet" href="/static/embed.css"></head>').replace('</body>', '<script src="/static/embed-bridge.js"></script><script>if(new URLSearchParams(location.search).get("embed")!=="1"){const bridge=document.createElement("script");bridge.src="/static/bridge.js";document.body.append(bridge);}</script></body>'));
 
 async function hashes(dir) {
   const files = [];

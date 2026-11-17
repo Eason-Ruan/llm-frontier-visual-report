@@ -271,18 +271,5 @@ async function boot() {
 }
 boot();
 
-const links = [...document.querySelectorAll(".rail > a")];
-const observer = new IntersectionObserver(
-  (entries) => {
-    for (const entry of entries) {
-      if (entry.isIntersecting)
-        links.forEach((a) =>
-          a.classList.toggle("active", a.hash === "#" + entry.target.id),
-        );
-    }
-  },
-  { rootMargin: "-18% 0px -65% 0px" },
-);
-document
-  .querySelectorAll(".chapter")
-  .forEach((chapter) => observer.observe(chapter));
+// Summary figures persist while the shell opens or closes chapter dashboards.
+document.fonts?.ready.then(() => window.dispatchEvent(new Event('resize')));

@@ -6,7 +6,7 @@ import './styles.css';
 
 function ErrorScreen({ error }) {
   const { language, setLanguage, t } = useLanguage();
-  return <main style={{ padding: 48, fontFamily: 'system-ui' }}>
+  return <main style={{ padding: 48, fontFamily: 'Inter, sans-serif' }}>
     <div className="language-switch" role="group" aria-label={t('页面语言', 'Page language')}>
       <button aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>EN</button>
       <button lang="zh-CN" aria-pressed={language === 'zh'} onClick={() => setLanguage('zh')}>中文</button>

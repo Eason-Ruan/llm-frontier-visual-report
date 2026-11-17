@@ -80,7 +80,22 @@ CH5_STATE = {"selection": None, "last_sync": None, "source": "report"}
 
 @app.get("/")
 def home():
-    return render_template("index.html")
+    return render_template("index.html", initial_chapter="")
+
+
+@app.get("/explore/<name>/")
+def explore(name):
+    if name not in {"ch1", "ch2", "ch3", "ch4", "ch5"}:
+        abort(404)
+    return render_template("index.html", initial_chapter=name)
+
+
+@app.get("/explore/<name>")
+def explore_redirect(name):
+    if name not in {"ch1", "ch2", "ch3", "ch4", "ch5"}:
+        abort(404)
+    query = "?" + request.query_string.decode("latin-1") if request.query_string else ""
+    return redirect(f"/explore/{name}/{query}", code=308)
 
 
 @app.get("/api/report-data")

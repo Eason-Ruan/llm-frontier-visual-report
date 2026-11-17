@@ -1,226 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 3: The Cost Cliff & Academic Exit</title>
-    <script defer src="/static/vendor/echarts.min.js"></script>
-    <script defer src="/static/chart-theme.js"></script>
-    <script defer src="/static/chapter3-charts.js"></script>
-    <script defer src="/static/chapter3.js"></script>
-    <style>
-        /* Shared report palette */
-        :root {
-            --topbar-bg: #132524;
-            --page-bg: #f4f6f5;
-            --card-bg: #ffffff;
-            --border-color: #e3e8e5;
-            --text-primary: #182825;
-            --text-muted: #677a76;
-            --accent-teal: #358177;
-            --badge-bg: #eaf3f1;
-            --badge-text: #245851;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--page-bg);
-            color: var(--text-primary);
-            margin: 0;
-            padding: 0;
-        }
-
-        .top-navbar {
-            background-color: var(--topbar-bg);
-            color: #e2e8e5;
-            padding: 10px 32px;
-            font-size: 0.78rem;
-            letter-spacing: 0.05em;
-            font-weight: 500;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .content-container {
-            max-width: 1720px;
-            margin: 0 auto;
-            padding: 24px 32px 48px 32px;
-        }
-
-        .chapter-tag {
-            font-size: 0.78rem;
-            color: var(--accent-teal);
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            margin-bottom: 6px;
-        }
-
-        .main-title {
-            font-size: 1.85rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0 0 6px 0;
-        }
-
-        .subtitle {
-            font-size: 0.88rem;
-            color: var(--text-muted);
-            margin: 0;
-        }
-
-        .chapter-intro { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:20px; }
-        .chapter-intro-copy { min-width:0; }
-
-        .card h2 {font:600 15px/1.4 system-ui,sans-serif; margin:8px 0 4px}
-        .card {
-            min-width: 0;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 18px 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-            min-height: 420px;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .insight-badge {
-            background-color: var(--badge-bg);
-            color: var(--badge-text);
-            border: 1px solid #d2e4e1;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        select {
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background: #ffffff;
-            color: var(--text-primary);
-            font-size: 0.82rem;
-            font-weight: 500;
-            cursor: pointer;
-            outline: none;
-        }
-        select:focus { border-color: var(--accent-teal); }
-
-        .reset-button {
-            padding: 7px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background: #fff;
-            color: var(--badge-text);
-            font-size: .82rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .reset-button:hover, .reset-button:focus-visible { border-color: var(--accent-teal); background: var(--badge-bg); }
-        .chart-controls { display: flex; align-items: center; gap: 8px; }
-        @media(max-width:700px){ .chapter-intro { align-items:flex-start; flex-direction:column; gap:12px; } }
-
-        .grid-top {
-            display: grid;
-            grid-template-columns: 1.35fr 1fr;
-            gap: 18px;
-            margin-bottom: 18px;
-        }
-
-        .grid-bottom {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 18px;
-        }
-
-        @media(max-width:600px){.content-container{padding:15px 10px}.card{padding:12px}.card-header{align-items:flex-start;flex-wrap:wrap;gap:8px}}
-        @media (max-width: 1200px) {
-            .grid-top, .grid-bottom { grid-template-columns: 1fr; }
-        }
-    </style>
-<link rel="stylesheet" href="/static/chart-theme.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 3: The Cost Cliff & Academic Exit</title>
+<script src="/static/embed-bridge.js"></script>
+<link rel="stylesheet" href="/static/chart-theme.css"><link rel="stylesheet" href="/static/chapter3-ui.css"><link rel="stylesheet" href="/static/embed.css">
+<script defer src="/static/vendor/echarts.min.js"></script><script defer src="/static/chart-theme.js"></script><script defer src="/static/chapter3-charts.js"></script><script defer src="/static/chapter3.js"></script><script defer src="/static/chapter3-ui.js"></script>
 </head>
 <body>
-
-    <!-- Top Navigation Bar -->
-    <div class="top-navbar">
-        <span>COMP7507 &nbsp;/&nbsp; GROUP 3 &nbsp;/&nbsp; CHAPTER 3</span>
-        <span>THE COST CLIFF &nbsp;·&nbsp; INTERACTIVE DATA STORY</span>
-    </div>
-
-    <div class="content-container">
-        <div class="chapter-intro">
-            <div class="chapter-intro-copy">
-                <div class="chapter-tag">COMPUTE ECONOMICS & SECTOR SHIFT</div>
-                <h1 class="main-title">Section 3: The Cost Cliff & Academic Exit</h1>
-                <p class="subtitle">How estimated training costs and model origins changed (2023–2026)</p>
-            </div>
-            <button class="reset-button" type="button" id="reset-views" title="Clear box selections and restore the original ranges in every chart">Reset all chart views</button>
-        </div>
-
-        <!-- Top Row (Charts 3.1 & 3.2) -->
-        <div class="grid-top">
-            <div class="card">
-                <div class="card-header">
-                    <span class="insight-badge">📈 Estimated model costs span several orders of magnitude</span>
-                    <div class="chart-controls">
-                        <select id="filter-type" aria-label="Model weight access">
-                            <option value="All">All Models</option>
-                            <option value="Open">Open Weights Only</option>
-                            <option value="Closed">Closed Weights Only</option>
-                        </select>
-                    </div>
-                </div>
-                <h2>3.1 Training cost growth and distribution (2023–2026)</h2>
-                <div id="chart1" style="width: 100%; min-height: 480px;"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <span class="insight-badge">⚠️ Compare reported funding with estimated training costs</span>
-                </div>
-                <h2>3.2 Small-lab funding vs. cost barrier</h2>
-                <div id="chart2" style="width: 100%; min-height: 480px;"></div>
-            </div>
-        </div>
-
-        <!-- Bottom Row (Charts 3.3a, 3.3b, 3.3c) -->
-        <div class="grid-bottom">
-            <div class="card">
-                <div class="card-header">
-                    <span class="insight-badge">🏛️ Academia down to 1.1%</span>
-                </div>
-                <h2>3.3(a) Model sector share (2023–2025)</h2>
-                <div id="chart3a" style="width: 100%; min-height: 380px;"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <span class="insight-badge">🏔️ Frontier compute out of academic reach</span>
-                </div>
-                <h2>3.3(b) Compute gap between industry and academia</h2>
-                <div id="chart3b" style="width: 100%; min-height: 380px;"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <span class="insight-badge">💰 OpenAI spending 4x in 1 year</span>
-                </div>
-                <h2>3.3(c) Frontier lab spending (2024–2025)</h2>
-                <div id="chart3c" style="width: 100%; min-height: 380px;"></div>
-            </div>
-        </div>
-    </div>
-
-<script src="/static/bridge.js"></script></body>
-</html>
+<div class="top-navbar"><span>COMP7507 &nbsp;/&nbsp; GROUP 3 &nbsp;/&nbsp; CHAPTER 3</span><span>THE COST CLIFF &nbsp;·&nbsp; INTERACTIVE DATA STORY</span></div>
+<div class="content-container">
+<header class="chapter-intro"><div class="chapter-intro-copy"><div class="chapter-tag">COMPUTE ECONOMICS & SECTOR SHIFT</div><h1 class="main-title">Section 3: The Cost Cliff & Academic Exit</h1><p class="subtitle">How estimated training costs and model origins changed (2023–2026)</p></div><button class="dashboard-help" type="button" aria-label="How to use this dashboard" aria-controls="dashboard-help" aria-expanded="false">?</button></header>
+<div id="dashboard-help" class="usage-card" hidden><h2>How to use this dashboard</h2><p>Choose model weight access to filter training costs. Drag a box to zoom into a chart. Hold Ctrl while scrolling to zoom, use its toolbar to restore a view, or double-click the chart. Reset all chart views restores all five charts and keeps the model access filter.</p></div>
+<div class="dashboard-shell"><aside class="filter-sidebar"><div class="insight-card"><h2>Insight</h2><p>Estimated model costs span several orders of magnitude. Compare reported funding with estimated training costs. Academia down to 1.1%. Frontier compute out of academic reach. OpenAI spending 4x in 1 year.</p></div><img class="insight-pagination" src="/static/chapter3-ui/pagination.svg" alt="Insight 1 of 2"><div class="filter-panel"><label class="filter-title" for="filter-type">Models</label><select id="filter-type" aria-label="Model weight access"><option value="All">All Models</option><option value="Open">Open Weights Only</option><option value="Closed">Closed Weights Only</option></select><button class="reset-button" type="button" id="reset-views" title="Clear box selections and restore the original ranges in every chart">Reset all chart views</button></div></aside>
+<main class="chart-region">
+<div class="grid-top">
+<section class="card"><div class="card-header"><h2>3.1 · Training cost growth and distribution (2023–2026)</h2><div class="chart-info"><button type="button" aria-label="Information about training costs" aria-describedby="cost-note" aria-expanded="false"><img src="/static/chapter3-ui/info.svg" alt=""></button><p id="cost-note" role="tooltip" class="chart-note">Estimated model costs span several orders of magnitude. Training cost is in 2023 USD. Use the chart toolbar to box zoom or restore the original ranges.</p></div></div><div id="chart1" class="chart-graph" role="img" aria-label="Training cost growth and distribution, 2023–2026"></div></section>
+<section class="card"><div class="card-header"><h2>3.2 · Small-lab funding vs. cost barrier</h2><div class="chart-info"><button type="button" aria-label="Information about funding and costs" aria-describedby="funding-note" aria-expanded="false"><img src="/static/chapter3-ui/info.svg" alt=""></button><p id="funding-note" role="tooltip" class="chart-note">Compare reported funding with estimated training costs. The reference is the estimated cost of one GPT-4.5 training run in 2025.</p></div></div><div id="chart2" class="chart-graph" role="img" aria-label="Small-lab funding versus the training cost barrier"></div></section>
+</div>
+<section class="card sector-card"><div class="card-header"><h2>3.3 · Sector, compute and spending</h2><div class="chart-info"><button type="button" aria-label="Information about sector, compute and spending" aria-describedby="sector-note" aria-expanded="false"><img src="/static/chapter3-ui/info.svg" alt=""></button><p id="sector-note" role="tooltip" class="chart-note">Academia down to 1.1%. Frontier compute out of academic reach. OpenAI spending 4x in 1 year. Each subplot keeps its own zoom and restore controls.</p></div></div><div class="grid-bottom">
+<div class="subplot"><h3>a. Model sector share (2023–2025)</h3><div id="chart3a" class="chart-graph" role="img" aria-label="Model sector share, 2023–2025"></div></div>
+<div class="subplot"><h3>b. Compute gap between industry and academia</h3><div id="chart3b" class="chart-graph" role="img" aria-label="Compute gap between industry and academia"></div></div>
+<div class="subplot"><h3>c. Frontier lab spending (2024–2025)</h3><div id="chart3c" class="chart-graph" role="img" aria-label="Frontier lab spending, 2024–2025"></div></div>
+</div></section>
+</main></div></div><script src="/static/bridge.js"></script>
+</body></html>
