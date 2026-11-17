@@ -21,7 +21,7 @@
   <div class="pager">
     <button id="prevBtn" class="pager-btn" title="Previous page (←)">◀</button>
     <div class="pager-title">
-      <span id="pageIndex">1 / 3</span>
+      <span id="pageIndex">1 / 2</span>
       <span id="pageTitle">The shift</span>
     </div>
     <button id="nextBtn" class="pager-btn" title="Next page (→)">▶</button>
@@ -46,8 +46,6 @@
 
     <div class="kpi-row" id="kpis"></div>
 
-    <div class="insight-strip"><b>What the evidence shows</b><span>Leadership concentrated at the top of the ranking.</span><span>Open-weight activity remained visible outside that top tier.</span><span>Cost, adoption, and capital moved on different measures.</span></div>
-
     <div class="grid-2">
       <div class="card">
         <div class="card-head"><h2>Top-10 composition: first vs latest snapshot</h2><span class="hint">Arena overall</span></div>
@@ -65,50 +63,9 @@
       </div>
     </div>
 
-    <p class="section-note">Reading guide: the vote series uses recorded snapshot totals, not unique users. The charts use different units and coverage windows; aligned timing does not establish causation.</p>
   </section>
 
-  <!-- ============================ PAGE 2 · Organizations ============================ -->
-  <section class="page hidden" data-page="institutions">
-    <div class="page-head">
-      <h1>The organizations</h1>
-      <p class="lead">The top tier became more concentrated, but open-weight challengers still reached high ranks. Compare organizations by their monthly best position; rank 1 is highest.</p>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <h2>Best rank by organization</h2>
-        <div class="ctl">
-          <div class="seg" id="groupSeg">
-            <button data-g="all">All</button>
-            <button data-g="big7" class="active">Big-7</button>
-            <button data-g="small">Smaller labs</button>
-          </div>
-          <button id="logToggle" class="ghost-btn">Log scale: on</button>
-        </div>
-      </div>
-      <div id="rankChart" class="chart chart-tall"></div>
-      <p class="footnote">Monthly best rank; lower rank numbers appear higher. Click a line or legend item to carry an organization into the comparison view.</p>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-head"><h2>Open-weight challengers</h2><span class="hint">Monthly best open-weight rank</span></div>
-        <div id="exceptions" class="chart"></div>
-        <p class="footnote">DeepSeek, Alibaba (Qwen), and Meta appear in the open-weight ranking. A high rank shows competitive performance in this benchmark, not its cause.</p>
-      </div>
-      <div class="card">
-        <div class="card-head"><h2>How to read the split</h2></div>
-        <div class="takeaway-list">
-          <div><b>Frontier leadership</b><p>A small set of organizations repeatedly reached the best overall ranks.</p></div>
-          <div><b>Open-weight competition</b><p>Open models remained present and sometimes ranked highly, even as the latest top ten was fully proprietary.</p></div>
-          <div><b>Next step</b><p>Select an organization to compare its rank with cost and vote share, alongside listed-company market context.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================ PAGE 3 · Compare evidence ============================ -->
+  <!-- ============================ PAGE 2 · Compare evidence ============================ -->
   <section class="page hidden" data-page="linked">
     <div class="page-head">
       <h1>Compare the evidence</h1>
@@ -116,6 +73,7 @@
     </div>
 
     <div class="org-picker"><label for="orgSelect">Organization</label><select id="orgSelect" aria-label="Select an organization"><option value="">Choose an organization</option></select><div class="chips" id="orgChips"></div></div>
+    <button id="logToggle" class="ghost-btn" type="button">Log scale: on</button>
 
     <div class="card summary-card"><div class="card-head"><h2>Selected organization</h2><span class="hint" id="selHint">Choose an organization above</span></div><div id="orgCard" class="org-card"></div></div>
 
