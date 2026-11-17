@@ -10,11 +10,11 @@ From this directory:
 bash start.sh
 ```
 
-Install uv first. The script runs Python 3.12 with `requirements.txt` in a uv-managed environment. Open <http://127.0.0.1:8764/>. To choose another port, run `PORT=8765 bash start.sh` and use that port in the URL. Press `Ctrl+C` to stop the server.
+On first run, the script creates `.venv` and installs `requirements.txt`. Open <http://127.0.0.1:8764/>. To choose another port, run `PORT=8765 bash start.sh` and use that port in the URL. Press `Ctrl+C` to stop the server.
 
 ## Share from this Mac
 
-Double-click `share.command`, or run `bash share.sh` in this directory. The script starts the Python WSGI server on a local-only port and creates a temporary HTTPS address through Cloudflare Tunnel. Copy the `https://...trycloudflare.com` address printed in the terminal and send it to teammates. No router port forwarding or Cloudflare account is needed. The first run resolves Python dependencies through uv and downloads the official `cloudflared` binary into `.tools/` if necessary.
+Double-click `share.command`, or run `bash share.sh` in this directory. The script starts the Python WSGI server on a local-only port and creates a temporary HTTPS address through Cloudflare Tunnel. Copy the `https://...trycloudflare.com` address printed in the terminal and send it to teammates. No router port forwarding or Cloudflare account is needed. The first run installs Python dependencies and downloads the official `cloudflared` binary into `.tools/` if necessary.
 
 Keep the Mac awake, connected to the internet, and the terminal open while others visit. Press `Ctrl+C` to stop sharing. The address changes on each restart, and anyone with the address can view the site. Restricting access or keeping a permanent address requires a named tunnel and a Cloudflare account.
 

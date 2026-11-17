@@ -522,7 +522,7 @@ function makeChart(id, series, opt = {}) {
           fontSize: 11,
           formatter:
             opt.formatY ||
-            ((value) => fmt(value, Math.abs(ymax - ymin) < 5 ? 1 : 0)),
+            ((value) => fmt(value, Math.abs(ymax - ymin) < 5 ? 1 : 0) + (opt.unit || "")),
         },
         axisLine: { show: false },
         axisTick: { show: false },
@@ -781,19 +781,11 @@ function renderExposure() {
           date +
           "</b><br>Battles: " +
           fmt(r.battles, 0) +
-          "<br>Both bad: " +
-          fmt((r.bad / r.battles) * 100) +
-          "%" +
           (r.partial ? "<br>Incomplete week" : "")
         );
       },
     },
   );
-  const total = sum(w.map((r) => r.total)),
-    bad = sum(w.map((r) => r.bad));
-  $("weekly-bad").textContent = total
-    ? "Both bad: " + fmt((bad / (total / 2)) * 100) + "%"
-    : "";
 }
 function renderTalent() {
   const t = talentData();
@@ -1332,11 +1324,6 @@ function boot() {
     $("model-search").value = "";
     setRange("2024-01-01", "2025-12-31");
   });
-  $("fullscreen").addEventListener("click", () => {
-    if (window.parent === window) location.assign('/explore/ch4/');
-    else window.ReportEmbed?.requestFullscreen();
-  });
-  $("export").addEventListener("click", exportSelection);
   document.querySelectorAll("[data-tab]").forEach((b) =>
     b.addEventListener("click", () => {
       document.querySelectorAll("[data-tab]").forEach((x) => {

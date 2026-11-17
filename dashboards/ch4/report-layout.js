@@ -7,7 +7,7 @@
   const aside = document.createElement('aside');
   aside.className = 'dashboard-sidebar';
   aside.setAttribute('aria-label', 'Insights and filters');
-  aside.innerHTML = `<section class="insight-panel"><h2>Insight</h2><p id="dashboard-insight">Compare four perspectives on the ecosystem: evaluation share, model supply, talent flows, and business adoption. The measures have different units and coverage windows, so read timing and direction separately.</p></section><div class="insight-pages" aria-label="Insight pages"><button type="button" class="active" aria-label="Overview insight" aria-pressed="true"></button><button type="button" aria-label="Reading guide" aria-pressed="false"></button></div><section class="filter-panel"><label class="filter-label" for="period-select">Period</label><select id="period-select"><option value="common">2024–25</option><option value="battle">Battle window</option><option value="all">All dates</option><option value="custom" disabled>Custom dates</option></select><span class="filter-label">Date range</span><div class="date-controls"></div><div class="range-controls"><input id="range-start" type="range" aria-label="Lower date bound" min="0" max="1368"><input id="range-end" type="range" aria-label="Upper date bound" min="0" max="1368"></div><div class="range-ticks"><span>2023</span><span>2024</span><span>2025</span><span>2026</span></div><div id="sidebar-models"><span class="filter-label">Models</span></div><div id="sidebar-country"><label class="filter-label" for="country">Country</label></div><div class="filter-toggles"></div><div class="filter-reset"></div><div class="filter-label tools-label">Tools</div><div class="filter-tools"></div></section>`;
+  aside.innerHTML = `<section class="insight-panel"><h2>Insight</h2><p id="dashboard-insight">Compare four perspectives on the ecosystem: evaluation share, model supply, talent flows, and business adoption. The measures have different units and coverage windows, so read timing and direction separately.</p></section><div class="insight-pages" aria-label="Insight pages"><button type="button" class="active" aria-label="Overview insight" aria-pressed="true"></button><button type="button" aria-label="Reading guide" aria-pressed="false"></button></div><section class="filter-panel"><label class="filter-label" for="period-select">Period</label><select id="period-select"><option value="common">2024–25</option><option value="battle">Battle window</option><option value="all">All dates</option><option value="custom" disabled>Custom dates</option></select><span class="filter-label">Date range</span><div class="date-controls"></div><div class="range-controls"><input id="range-start" type="range" aria-label="Lower date bound" min="0" max="1368"><input id="range-end" type="range" aria-label="Upper date bound" min="0" max="1368"></div><div class="range-ticks"><span>2023</span><span>2024</span><span>2025</span><span>2026</span></div><div id="sidebar-models"><span class="filter-label">Models</span></div><div id="sidebar-country"><label class="filter-label" for="country">Country</label></div><div class="filter-toggles"></div><div class="filter-reset"></div></section>`;
   const region = document.createElement('div');
   region.className = 'dashboard-region';
   layout.append(aside, region);
@@ -16,16 +16,14 @@
   summary.className = 'data-summary';
   summary.innerHTML = '<h2>Data summary</h2>';
   summary.append(byId('kpis'));
-  region.append(summary, document.querySelector('.tabs'), document.querySelector('.grid'), document.querySelector('.footer'));
+  region.append(summary, document.querySelector('.tabs'), document.querySelector('.grid'));
   aside.querySelector('.date-controls').append(byId('start'), byId('end'));
   aside.querySelector('#sidebar-models').append(document.querySelector('.modelpicker'));
   aside.querySelector('#sidebar-country').append(byId('country'));
   for (const id of ['fixed', 'complete', 'ci', 'events']) aside.querySelector('.filter-toggles').append(byId(id).closest('label'));
   byId('reset').textContent = 'Clear all filters';
   aside.querySelector('.filter-reset').append(byId('reset'));
-  aside.querySelector('.filter-tools').append(byId('export'), byId('fullscreen'));
   document.querySelector('.toolbar').classList.add('adapted-presets');
-  document.querySelector('.actions').remove();
   document.querySelectorAll('.head .controls').forEach((node) => { if (!node.children.length) node.remove(); });
   document.querySelectorAll('.grid > .card').forEach((card, i) => {
     card.querySelector('.num').textContent = `4.${i + 1} ·`;

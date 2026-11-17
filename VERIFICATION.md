@@ -26,7 +26,7 @@ Actual failed-load checks abort the Chapter 5 iframe document request and, separ
 ## Reproduce
 
 ```sh
-PORT=8766 UV_CACHE_DIR=/private/tmp/llm-frontier-uv-cache UV_PYTHON=3.12 ./start.sh
+PORT=8766 ./start.sh
 cd sites/arena-weight-flow && npm test
 ```
 
