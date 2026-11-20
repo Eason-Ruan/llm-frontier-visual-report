@@ -20,6 +20,8 @@ export default function MonthSummary({ periods, selected, gap, range, onSelect, 
     const [start, end] = range;
     const first = monthStats(periods[start]), last = monthStats(periods[end]);
     const delta = first.total && last.total ? Number((100 * (last.open / last.total - first.open / first.total)).toFixed(1)) : null;
+    const deltaColor = delta > 0 ? 'green' : delta < 0 ? 'red' : undefined;
+    const deltaLabel = delta === null ? '—' : `${delta > 0 ? '+' : ''}${delta.toFixed(1)}`;
     const months = end - start;
     return <section className="month-summary" aria-labelledby="month-summary-title">
       <header className="monthly-head">
@@ -28,7 +30,11 @@ export default function MonthSummary({ periods, selected, gap, range, onSelect, 
       </header>
       <div className="month-stats" aria-live="polite">
         <div><span>{periods[start].month}</span><strong className="green">{percent(first.open, first.total)}{first.total > 0 && <small>%</small>}</strong>{!periods[start].observed && <span>{noSnapshot}</span>}</div>
-        <div><span>{t('占比变化', 'Share change')}</span><strong>{delta === null ? '—' : signed(delta)}{delta !== null && <small>{t('个百分点', 'pp')}</small>}</strong><span>{t(`相隔 ${months} 个月`, `${months} ${months === 1 ? 'month' : 'months'} apart`)}</span></div>
+        <div>
+          <span>{t('占比差值', 'Share difference')}</span>
+          <strong className={deltaColor}>{deltaLabel}{delta !== null && <small>%</small>}</strong>
+          <span>{t(`相隔 ${months} 个月`, `${months} ${months === 1 ? 'month' : 'months'} apart`)}</span>
+        </div>
         <div><span>{periods[end].month}</span><strong className="green">{percent(last.open, last.total)}{last.total > 0 && <small>%</small>}</strong>{!periods[end].observed && <span>{noSnapshot}</span>}</div>
       </div>
     </section>;
