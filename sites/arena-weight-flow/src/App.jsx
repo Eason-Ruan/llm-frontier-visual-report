@@ -69,7 +69,7 @@ export default function App() {
   const label = categoryItem ? categoryLabel(categoryItem, language) : t('综合榜单', 'Overall');
   useEffect(() => {
     if (!EMBED_MODE) return;
-    window.ReportEmbed?.ready({ title: 'From leaderboard ranks to open-weight share', help: 'Explore Top 10 / Top 50 ranks, composition and frontier gaps. Select a month for its snapshot and model table. Hold and drag across months to compare open-weight share.' });
+    window.ReportEmbed?.ready({ title: 'From leaderboard ranks to open-weight share', help: 'Explore Top 10 / Top 50 ranks, composition and frontier gaps. Select a month for its snapshot and model table. Drag across months to compare open-weight share.' });
     window.ReportEmbed?.setView({ view: mode, selection: current?.month || null, category });
     window.ReportEmbed?.notify();
   }, [mode, category, current?.month, top, stacking, distinguish, notesOpen]);
@@ -150,7 +150,7 @@ export default function App() {
             {error ? <div className="load-state" role="alert"><p>{errorMessage}</p><button onClick={() => setRetry(r => r + 1)}>{t('重新加载', 'Try again')}</button></div> : !data ? <div className="load-state" role="status">{t('正在读取榜单…', 'Loading leaderboard…')}</div> : <FlowChart key={category} periods={periods} top={top} mode={mode} stacking={effectiveStacking} distinguish={distinguish} selected={selected} onSelect={selectMonth}
               range={activeRange} onRangePreview={setRangePreview} onSelectRange={selectRange} />}
             {EMBED_MODE && chartLegend}
-            <div className="chart-footer"><span id="month-selection-help"><ArrowDown size={12} /> {t('点击月份查看明细 · 长按拖动比较两个月 · 窄屏可横向滚动', 'Select a month for details · Hold and drag to compare two months · Scroll horizontally on narrow screens')}</span><span>{periods.length ? t(`${periods[0].month} — ${periods.at(-1).month} · ${periods.length} 个月`, `${periods[0].month} — ${periods.at(-1).month} · ${periods.length} months`) : ''}</span></div>
+            <div className="chart-footer"><span id="month-selection-help"><ArrowDown size={12} /> {t('点击月份查看明细 · 横向拖动比较两个月 · 拖至边缘可滚动时间轴', 'Select a month for details · Drag across months to compare · Drag to the edge to scroll')}</span><span>{periods.length ? t(`${periods[0].month} — ${periods.at(-1).month} · ${periods.length} 个月`, `${periods[0].month} — ${periods.at(-1).month} · ${periods.length} months`) : ''}</span></div>
             {current?.observed && !activeRange && <div className="monthly-models">
                 <details className="model-details"><summary>{t(`查看这 ${current.models.length} 个模型的排位与许可`, `View ranks and licenses for these ${current.models.length} models`)}</summary><div className="table-scroll"><table><thead><tr><th>{t('排位', 'Rank')}</th><th>{t('模型', 'Model')}</th><th>{t('权重状态', 'Weight access')}</th><th>{t('许可证记录', 'Recorded license')}</th></tr></thead><tbody>{current.models.map(m => <tr key={m.model}><td>{m.rank}</td><td>{m.model}<small>{sourceText(m.org, language)}</small></td><td><i style={{ background: colors[m.kind] }} />{accessLabel(m.kind, language)}</td><td>{m.license ? sourceText(m.license, language) : t('未记录', 'Not recorded')}</td></tr>)}</tbody></table></div></details>
             </div>}

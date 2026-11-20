@@ -8,8 +8,7 @@ import { blockAt, KINDS, palette, layout, gapPeaks, shortModelName, compositionE
 import { useLanguage, accessLabel, stackLabel, sourceText } from './i18n.jsx';
 
 const REFERENCE_COLOR = '#737b80';
-const RANGE_HOLD_MS = 350;
-const RANGE_MOVE_TOLERANCE = 8;
+const RANGE_MOVE_TOLERANCE = 4;
 
 export default function FlowChart({ periods, top, mode, stacking, distinguish, selected, onSelect, compact = false, onHoverMonth, hoveredMonth = null, range, onRangePreview, onSelectRange }) {
   const { language, t } = useLanguage();
@@ -17,19 +16,7 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
   const gapProgress = useRef(mode === 'gap' ? 1 : 0), frontierHits = useRef([]), peakHits = useRef([]);
   const [areaHover, setAreaHover] = useState(null);
   const scroll = useRef(null), gesture = useRef(null);
-  useEffect(() => {
-    if (!onRangePreview) return;
-    const node = canvas.current;
-    const holdTouch = event => {
-      if (gesture.current?.active && event.cancelable) event.preventDefault();
-    };
-    node.addEventListener('touchmove', holdTouch, { passive: false });
-    return () => {
-      node.removeEventListener('touchmove', holdTouch);
-      clearTimeout(gesture.current?.holdTimer);
-      clearInterval(gesture.current?.scrollTimer);
-    };
-  }, [onRangePreview]);
+  useEffect(() => () => clearInterval(gesture.current?.scrollTimer), []);
   const hits = useRef([]), [width, setWidth] = useState(1100), [tip, setTip] = useState(null);
   const baseHeight = compact ? (top === 50 ? 470 : 420) : top === 50 ? 640 : 490;
   const colors = useMemo(() => palette(distinguish), [distinguish]);
@@ -370,30 +357,28 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
     const start = monthAt(event.clientX);
     if (event.button !== 0 || !event.isPrimary || start < 0 || start >= periods.length) return;
     event.currentTarget.setPointerCapture(event.pointerId);
-    const drag = { id: event.pointerId, start, end: start, x: event.clientX, y: event.clientY };
-    gesture.current = drag;
-    drag.holdTimer = setTimeout(() => {
-      drag.active = true;
-      setTip(null);
-      setAreaHover(null);
-      onRangePreview([start, start]);
-      drag.scrollTimer = setInterval(() => {
-        const viewport = scroll.current;
-        const { left, right } = viewport.getBoundingClientRect();
-        const edge = 28;
-        const distance = drag.x < left + edge ? drag.x - left - edge : Math.max(0, drag.x - right + edge);
-        if (!distance) return;
-        const before = viewport.scrollLeft;
-        viewport.scrollLeft += Math.max(-14, Math.min(14, distance / 3));
-        if (viewport.scrollLeft !== before) preview(drag, drag.x);
-      }, 16);
-    }, RANGE_HOLD_MS);
+    gesture.current = { id: event.pointerId, start, end: start, x: event.clientX, y: event.clientY };
+  };
+  const activateRange = drag => {
+    drag.active = true;
+    setTip(null);
+    setAreaHover(null);
+    onRangePreview([drag.start, drag.start]);
+    drag.scrollTimer = setInterval(() => {
+      const viewport = scroll.current;
+      const { left, right } = viewport.getBoundingClientRect();
+      const edge = 28;
+      const distance = drag.x < left + edge ? drag.x - left - edge : Math.max(0, drag.x - right + edge);
+      if (!distance) return;
+      const before = viewport.scrollLeft;
+      viewport.scrollLeft += Math.max(-14, Math.min(14, distance / 3));
+      if (viewport.scrollLeft !== before) preview(drag, drag.x);
+    }, 16);
   };
   const finishRange = (event, canceled = false) => {
     const drag = gesture.current;
     if (!drag || drag.id !== event.pointerId) return;
     gesture.current = null;
-    clearTimeout(drag.holdTimer);
     clearInterval(drag.scrollTimer);
     if (drag.active) {
       onRangePreview(null);
@@ -405,15 +390,17 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
   const pointer = e => {
     const drag = gesture.current;
     if (drag?.id === e.pointerId) {
+      if (!drag.active) {
+        const dx = Math.abs(e.clientX - drag.x);
+        const dy = Math.abs(e.clientY - drag.y);
+        if (Math.max(dx, dy) >= RANGE_MOVE_TOLERANCE) drag.moved = true;
+        if (dx >= RANGE_MOVE_TOLERANCE && dx > dy) activateRange(drag);
+      }
       if (drag.active) {
         drag.x = e.clientX;
         preview(drag, e.clientX);
-        return;
       }
-      if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > RANGE_MOVE_TOLERANCE) {
-        clearTimeout(drag.holdTimer);
-        drag.moved = true;
-      }
+      return;
     }
     const r = canvas.current.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
     const monthIndex=Math.floor((x-geo.left)/geo.col);
@@ -442,7 +429,7 @@ export default function FlowChart({ periods, top, mode, stacking, distinguish, s
   return <div ref={host} className="chart-container" data-renderer="d3-canvas">
     <div ref={scroll} className="chart-scroll" tabIndex={0} aria-describedby={onSelectRange ? "month-selection-help" : undefined} aria-label={t('可横向滚动的图表。', 'Horizontally scrollable chart.')}>
       <div className="chart-stage" style={{width,height}}>
-        <canvas ref={canvas} style={{ width, height }} role="img" aria-label={t(`${chartDescription}，${periods.length} 个月。绿色开权重、红色闭权重、灰色未知。`, `${chartDescription}, ${periods.length} months. Green: open-weight; red: closed-weight; gray: unknown.`)}
+        <canvas ref={canvas} className={onSelectRange ? "month-range-canvas" : undefined} style={{ width, height }} role="img" aria-label={t(`${chartDescription}，${periods.length} 个月。绿色开权重、红色闭权重、灰色未知。`, `${chartDescription}, ${periods.length} months. Green: open-weight; red: closed-weight; gray: unknown.`)}
           onPointerDown={onSelectRange ? startRange : undefined}
           onPointerMove={pointer}
           onPointerLeave={() => { setTip(null); setAreaHover(null); onHoverMonth?.(null); }}

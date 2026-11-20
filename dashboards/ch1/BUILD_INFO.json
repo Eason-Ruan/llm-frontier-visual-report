@@ -7,14 +7,14 @@
   "language": "en",
   "files": [
     {
-      "path": "assets/index-37VlDGkn.js",
-      "bytes": 331118,
-      "sha256": "987152fc0c647927a1f4a3f66cdeece97c70f06f57630015ac2e6725ac937528"
+      "path": "assets/index-AYQsgrId.css",
+      "bytes": 27187,
+      "sha256": "8f1dfd285fb15463fdc7b10a207fd5ea0c3f9f49178c3aa186e78393642f834d"
     },
     {
-      "path": "assets/index-SioP3q-8.css",
-      "bytes": 27137,
-      "sha256": "15c7c1425944324aa4d6754020726cc3e06a04470c6254206dc0f98a8efebdad"
+      "path": "assets/index-DZMOB6GV.js",
+      "bytes": 330901,
+      "sha256": "5252b0f4d60c0c4120d7369bb6195152f5de3f905fdc05b7dfc7cb9a02c38497"
     },
     {
       "path": "data/arena/chinese.json",

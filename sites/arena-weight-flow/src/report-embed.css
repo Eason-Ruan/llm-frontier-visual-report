@@ -109,6 +109,9 @@
   margin: 10px 6px 0;
   border-top: 1px solid #e2e7df;
 }
+.month-range-canvas {
+  touch-action: pan-y pinch-zoom;
+}
 .month-range-highlight {
   position: absolute;
   pointer-events: none;
