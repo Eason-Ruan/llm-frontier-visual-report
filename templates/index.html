@@ -8,6 +8,40 @@
   <title>From Open Labs to Closed Empires · Visual Report</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="stylesheet" href="/static/chart-theme.css">
+  <style>
+    /* Synchronize the two Chapter 3 overview chart cards and their plot areas */
+    #ch3 .chart-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    #ch3 .chart-grid .figure {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    /* Lock both chart canvases to identical fixed heights */
+    #chart-ch3-scatter,
+    #chart-ch3-bars {
+      height: 430px !important;
+      min-height: 430px !important;
+      width: 100%;
+    }
+
+    #ch3 .chart-grid figcaption {
+      margin-top: auto;
+    }
+
+    @media (max-width: 759px) {
+      #ch3 .chart-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body data-initial-chapter="{{ initial_chapter|default('') }}">
   <button class="mobile-menu" type="button" aria-controls="report-navigation" aria-expanded="false">☰ <span>Navigation</span></button>
