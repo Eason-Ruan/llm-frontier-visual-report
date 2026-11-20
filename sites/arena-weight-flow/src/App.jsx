@@ -41,6 +41,16 @@ export default function App() {
   };
   const [stacking, setStacking] = useState('all'), [distinguish, setDistinguish] = useState(false);
   const effectiveStacking = top === 10 ? 'all' : stacking;
+  const showStacking = top === 50 && mode === 'area';
+  const chartViews = [
+    { id: 'rank', label: t('原始排名', 'Original rank'), icon: <Grid2X2 size={14} /> },
+    { id: 'area', label: t('面积组成', 'Composition'), icon: <Layers3 size={14} /> },
+  ];
+  if (top === 10) chartViews.push({ id: 'gap', label: t('前沿差距', 'Frontier gap'), icon: <ArrowDown size={14} /> });
+  const changeTop = next => {
+    setTop(next);
+    if (next === 50 && mode === 'gap') setMode('rank');
+  };
   const colors = useMemo(() => palette(distinguish), [distinguish]);
   const [error, setError] = useState(''), [retry, setRetry] = useState(0);
   useEffect(() => {
@@ -112,9 +122,9 @@ export default function App() {
               <section className="dashboard-insight"><h2>Insight</h2><p>{mode === 'area' ? `Compare how the balance of open- and closed-weight models changes across the Top ${top}. Each monthly snapshot uses the model count actually recorded for that month.` : mode === 'gap' ? 'Rank gap = best open-weight rank − best closed-weight rank. Positive values mean closed-weight leads; negative values mean open-weight leads. The gap measures ordering, not a capability difference.' : 'One block, one model. See where it ranks, then which group it belongs to. Gray outlines mark tied groups; hover for the original rank.'}</p></section>
               <section className="dashboard-filter-card">
                 <label>Category<select value={category} onChange={e => changeCategory(e.target.value)} disabled={!catalog} aria-label="Arena Text category">{[...new Set(catalog?.categories.map(c => c.group) || [])].map(group => <optgroup key={group} label={groupLabel(group, language)}>{catalog.categories.filter(c => c.group === group).map(c => <option key={c.id} value={c.id}>{categoryLabel(c, language)}</option>)}</optgroup>)}</select></label>
-                <label>Leaderboard range<select aria-label="Leaderboard range" value={top} onChange={e => { const next = Number(e.target.value); setTop(next); if (next !== 10 && mode === 'gap') setMode('rank'); }}><option value={10}>Top 10</option><option value={50}>Top 50</option></select></label>
-                <label>Chart view<select aria-label="Chart view" value={mode} onChange={e => { setMode(e.target.value); if (e.target.value === 'gap') setTop(10); }}><option value="rank">Rank blocks</option><option value="area">Composition</option><option value="gap">Frontier gap</option></select></label>
-                {top === 50 && <label>Stacking<select aria-label="Stacking" value={stacking} onChange={e => { setStacking(e.target.value); setMode('area'); }}>{Object.keys(STACK_LABELS).map(id => <option key={id} value={id}>{stackLabel(id, language)}</option>)}</select></label>}
+                <label>Leaderboard range<select aria-label="Leaderboard range" value={top} onChange={e => changeTop(Number(e.target.value))}><option value={10}>Top 10</option><option value={50}>Top 50</option></select></label>
+                <label>Chart view<select aria-label="Chart view" value={mode} onChange={e => setMode(e.target.value)}>{chartViews.map(({ id, label }) => <option key={id} value={id}>{label}</option>)}</select></label>
+                {showStacking && <label>Stacking<select aria-label="Stacking" value={stacking} onChange={e => setStacking(e.target.value)}>{Object.keys(STACK_LABELS).map(id => <option key={id} value={id}>{stackLabel(id, language)}</option>)}</select></label>}
                 <label className="dashboard-license"><input type="checkbox" checked={distinguish} onChange={e => setDistinguish(e.target.checked)} />Apache / MIT detail</label>
                 <button className="dashboard-clear" onClick={() => { changeCategory(catalog?.defaultCategory || 'overall'); setTop(50); setMode('rank'); setStacking('all'); setDistinguish(false); setRange(null); }}>Clear all filters</button>
               </section>
@@ -124,14 +134,14 @@ export default function App() {
             range={activeRange && activeRange[0] !== activeRange[1] ? activeRange : null}
             onSelect={selectMonth} onClearRange={() => setRange(null)} />}
           <section className="figure" id="chart" aria-labelledby={EMBED_MODE ? 'embed-chart-title' : 'chart-title'}>
-            {EMBED_MODE && <header className="dashboard-chart-heading"><h2 id="embed-chart-title">1.1 · Top {top} {mode === 'area' ? 'composition' : mode === 'gap' ? 'frontier gap' : 'rank blocks'}</h2><button type="button" className="dashboard-info-button" aria-label="Chart notes and data limitations" aria-describedby="embed-chart-notes" onClick={() => setNotesOpen(value => !value)} aria-expanded={notesOpen}><img src={assetUrl('ui/information.svg')} width="16.6" height="16.6" alt="" /></button></header>}
+            {EMBED_MODE && <header className="dashboard-chart-heading"><h2 id="embed-chart-title">1.1 · Top {top} {chartViews.find(view => view.id === mode)?.label}</h2><button type="button" className="dashboard-info-button" aria-label="Chart notes and data limitations" aria-describedby="embed-chart-notes" onClick={() => setNotesOpen(value => !value)} aria-expanded={notesOpen}><img src={assetUrl('ui/information.svg')} width="16.6" height="16.6" alt="" /></button></header>}
             <div className={EMBED_MODE ? `dashboard-chart-notes${notesOpen ? ' is-open' : ''}` : undefined} id={EMBED_MODE ? 'embed-chart-notes' : undefined}>
             {!EMBED_MODE && <><div className="figure-heading"><div><span className="eyebrow">{t('01 / 权重与许可', '01 / WEIGHTS & LICENSES')}</span><h2 id="chart-title">{t('从榜单排位，到开放占比', 'From leaderboard ranks to open-weight share')}</h2></div><label className="category-label">{t('Arena Text 子榜单', 'Arena Text category')}<select value={category} onChange={e => changeCategory(e.target.value)} disabled={!catalog} aria-label={t('Arena Text 子榜单', 'Arena Text category')}>{[...new Set(catalog?.categories.map(c => c.group) || [])].map(group => <optgroup key={group} label={groupLabel(group, language)}>{catalog.categories.filter(c => c.group === group).map(c => <option key={c.id} value={c.id}>{categoryLabel(c, language)}</option>)}</optgroup>)}</select></label></div>
             <div className="controls">
-              <Segments label={t('榜单范围', 'Leaderboard range')} value={top} onChange={n => { setTop(n); if (n !== 10 && mode === 'gap') setMode('rank'); }} values={[{ id: 10, label: t('前 10 名', 'Top 10') }, { id: 50, label: t('前 50 名', 'Top 50') }]} />
-              <div className="mode-control"><span>{t('观察方式', 'View')}</span><Segments label={t('观察方式', 'Chart view')} value={mode} onChange={m => { setMode(m); if (m === 'gap') setTop(10); }} values={[{ id: 'rank', label: t('排名方块', 'Rank blocks'), icon: <Grid2X2 size={14} /> }, { id: 'area', label: t('面积组成', 'Composition'), icon: <Layers3 size={14} /> }, { id: 'gap', label: t('前沿差距', 'Frontier gap'), icon: <ArrowDown size={14} /> }]} /></div>
+              <Segments label={t('榜单范围', 'Leaderboard range')} value={top} onChange={changeTop} values={[{ id: 10, label: t('前 10 名', 'Top 10') }, { id: 50, label: t('前 50 名', 'Top 50') }]} />
+              <div className="mode-control"><span>{t('观察方式', 'View')}</span><Segments label={t('观察方式', 'Chart view')} value={mode} onChange={setMode} values={chartViews} /></div>
             </div>
-            <div className="stack-controls">{top === 50 && <label>{t('堆叠方式', 'Stacking')}<select aria-label={t('堆叠方式', 'Stacking')} value={stacking} onChange={e => { setStacking(e.target.value); setMode('area'); }}>{Object.keys(STACK_LABELS).map(id => <option key={id} value={id}>{stackLabel(id, language)}</option>)}</select></label>}<label className="license-toggle"><input type="checkbox" checked={distinguish} onChange={e => setDistinguish(e.target.checked)} /><span className="toggle-track" aria-hidden="true" /><span>{t('Apache / MIT 显示深绿', 'Show Apache / MIT in dark green')}</span></label></div>
+            <div className="stack-controls">{showStacking && <label>{t('堆叠方式', 'Stacking')}<select aria-label={t('堆叠方式', 'Stacking')} value={stacking} onChange={e => setStacking(e.target.value)}>{Object.keys(STACK_LABELS).map(id => <option key={id} value={id}>{stackLabel(id, language)}</option>)}</select></label>}<label className="license-toggle"><input type="checkbox" checked={distinguish} onChange={e => setDistinguish(e.target.checked)} /><span className="toggle-track" aria-hidden="true" /><span>{t('Apache / MIT 显示深绿', 'Show Apache / MIT in dark green')}</span></label></div>
             </>}
             <div className="chart-caption" aria-live="polite"><strong>{label} · {t(`前 ${top} 名`, `Top ${top}`)}</strong><span>{mode === 'gap'
               ? t('名次差 = 最强开权重名次 − 最强闭权重名次；正值闭权重领先，负值开权重领先。背景为淡化的前 10 名排名色块。', 'Rank gap = best open-weight rank − best closed-weight rank. Positive: closed-weight leads; negative: open-weight leads. Faded Top 10 rank blocks form the backdrop.')
