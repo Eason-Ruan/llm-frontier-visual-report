@@ -12,6 +12,38 @@ import './report-embed.css';
 function Segments({ label, values, value, onChange }) {
   return <div className="segments" role="group" aria-label={label}>{values.map(v => <button key={v.id} aria-pressed={value === v.id} onClick={() => onChange(v.id)}>{v.icon}{v.label}</button>)}</div>;
 }
+function DashboardInsights() {
+  const { t } = useLanguage();
+  const [page, setPage] = useState(0);
+  const insights = [
+    {
+      title: t('Top 50 组成', 'Top 50 composition'),
+      copy: t('开放权重模型从 2024 年 2 月的 40 个（80%）降至 2026 年 9 月的 9 个（18%）。这 9 个模型的名次都在第 17 名或之后。', 'Open-weight models fell from 40 of 50 (80%) in February 2024 to 9 of 50 (18%) in September 2026. All nine ranked 17th or lower.'),
+    },
+    {
+      title: t('前沿名次差', 'Frontier gap'),
+      copy: t('闭权重模型的领先优势从 2023 年 12 月的 2 名扩大到 2024 年 10 月的 10 名。开放权重模型 DeepSeek R1 在 2025 年 1 月和 2 月登顶。此后闭权重模型重新领先，到 2026 年 9 月领先 16 名。', 'The closed-weight lead grew from 2 ranks in December 2023 to 10 in October 2024. Open-weight DeepSeek R1 took first place in January and February 2025. Closed-weight models regained the lead, reaching a 16-rank gap in September 2026.'),
+    },
+  ];
+
+  return <div className="dashboard-insight-group">
+    <section className="dashboard-insight">
+      <h2>{t('观察结论', 'Insight')}</h2>
+      <div className="insight-copy" id="ch1-insight-copy" aria-live="polite">
+        {insights.map(({ title, copy }, index) => (
+          <p key={index} aria-hidden={page !== index}><strong>{title}.</strong> {copy}</p>
+        ))}
+      </div>
+    </section>
+    <div className="insight-pages" role="group" aria-label={t('观察结论分页', 'Insight pages')}>
+      {insights.map(({ title }, index) => (
+        <button key={index} type="button" aria-label={title} aria-controls="ch1-insight-copy"
+          aria-pressed={page === index} onClick={() => setPage(index)} />
+      ))}
+    </div>
+  </div>;
+}
+
 export default function App() {
   const { language, setLanguage, t } = useLanguage();
   const [page, setPage] = useState(REPORT_EMBED || new URLSearchParams(location.search).get('view') === 'dashboard' ? 'dashboard' : 'story');
@@ -119,14 +151,7 @@ export default function App() {
           <section className="hero"><div><span className="eyebrow"><i /> {t('模型权重开放程度的时间变化', 'MODEL ACCESS OVER TIME')}</span><h1>{t('格局之变', 'The Flip')}<span>.</span></h1><h2>{t('权重与许可组成', 'Weight Access & License Composition')}</h2><p>{t('一个方块，一个模型。先看它排在哪里，再看它属于哪一边。', 'One block, one model. See where it ranks, then which group it belongs to.')}</p></div><div className="hero-symbol" aria-hidden="true"><div className="mini-grid">{Array.from({ length: 25 }, (_, i) => <i key={i} style={{ background: i % 5 < 3 ? (i % 5 < 2 ? colors.apacheMit : colors.otherOpen) : colors.closed, opacity: .45 + (i % 5) * .1 }} />)}</div><ArrowDown size={19} /><span>{t('排名 → 组成', 'RANK → COMPOSITION')}</span></div></section>
           <div className={EMBED_MODE ? 'ch1-dashboard-layout' : undefined}>
             {EMBED_MODE && <aside className="dashboard-filters" aria-label="Chart filters and insight">
-              <section className="dashboard-insight">
-                <h2>{t('观察结论', 'Insight')}</h2>
-                <ul>
-                  <li><strong>{t('Arena 排名', 'Arena rankings')}.</strong> {t('Arena 根据用户比较两个模型回答时的投票排名。我们使用从 2023 年开始的综合榜单月度快照，以 Top 50 观察更广的竞争格局，以 Top 10 观察前沿。', 'Arena ranks models using human votes on paired responses. We use monthly snapshots of the overall leaderboard starting in 2023, with the Top 50 for the broader field and the Top 10 for the frontier.')}</li>
-                  <li><strong>{t('Top 50 组成', 'Top 50 composition')}.</strong> {t('开放权重模型从 2024 年 2 月的 40 个（80%）降至 2026 年 9 月的 9 个（18%）。这 9 个模型的名次都在第 17 名或之后。', 'Open-weight models fell from 40 of 50 (80%) in February 2024 to 9 of 50 (18%) in September 2026. All nine ranked 17th or lower.')}</li>
-                  <li><strong>{t('前沿名次差', 'Frontier gap')}.</strong> {t('开放权重推理模型 DeepSeek R1 在 2025 年 1 月和 2 月排名第一。随后闭权重模型重回榜首，名次差总体扩大，到 2026 年 9 月达到 16 名。', 'The open-weight reasoning model DeepSeek R1 took first place in January and February 2025. Closed-weight models regained the lead, and the rank gap widened overall to 16 places by September 2026.')}</li>
-                </ul>
-              </section>
+              <DashboardInsights />
               <section className="dashboard-filter-card">
                 <label>Category<select value={category} onChange={e => changeCategory(e.target.value)} disabled={!catalog} aria-label="Arena Text category">{[...new Set(catalog?.categories.map(c => c.group) || [])].map(group => <optgroup key={group} label={groupLabel(group, language)}>{catalog.categories.filter(c => c.group === group).map(c => <option key={c.id} value={c.id}>{categoryLabel(c, language)}</option>)}</optgroup>)}</select></label>
                 <label>Leaderboard range<select aria-label="Leaderboard range" value={top} onChange={e => changeTop(Number(e.target.value))}><option value={10}>Top 10</option><option value={50}>Top 50</option></select></label>
